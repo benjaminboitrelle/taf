@@ -185,41 +185,32 @@ set_target_properties(${PROJECT_NAME}
   RUNTIME_OUTPUT_DIRECTORY ${BUILD_DIR}
 )
 
-# Custom commands for dictionary files
-add_custom_command(TARGET ${libname} POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy
-  ${OBJ_DIR}/libTAF.so ${LIB_DIR}/libTAF.so
-)
-add_custom_command(TARGET ${libname} POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy
-  ${OBJ_DIR}/libDTdict_rdict.pcm ${LIB_DIR}/libDTdict_rdict.pcm
-)
-add_custom_command(TARGET ${libname} POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy
-  ${OBJ_DIR}/libMdict_rdict.pcm ${LIB_DIR}/libMdict_rdict.pcm
-)
-add_custom_command(TARGET ${libname} POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy
-  ${OBJ_DIR}/libDTdict.rootmap ${LIB_DIR}/libDTdict.rootmap
-)
-add_custom_command(TARGET ${libname} POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy
-  ${OBJ_DIR}/libMdict.rootmap ${LIB_DIR}/libMdict.rootmap
-)
+# # Custom commands for dictionary files
+# add_custom_command(TARGET ${libname} POST_BUILD
+#   COMMAND ${CMAKE_COMMAND} -E copy
+#   ${OBJ_DIR}/libTAF.so ${LIB_DIR}/libTAF.so
+# )
+# add_custom_command(TARGET ${libname} POST_BUILD
+#   COMMAND ${CMAKE_COMMAND} -E copy
+#   ${OBJ_DIR}/libDTdict_rdict.pcm ${LIB_DIR}/libDTdict_rdict.pcm
+# )
+# add_custom_command(TARGET ${libname} POST_BUILD
+#   COMMAND ${CMAKE_COMMAND} -E copy
+#   ${OBJ_DIR}/libMdict_rdict.pcm ${LIB_DIR}/libMdict_rdict.pcm
+# )
+# add_custom_command(TARGET ${libname} POST_BUILD
+#   COMMAND ${CMAKE_COMMAND} -E copy
+#   ${OBJ_DIR}/libDTdict.rootmap ${LIB_DIR}/libDTdict.rootmap
+# )
+# add_custom_command(TARGET ${libname} POST_BUILD
+#   COMMAND ${CMAKE_COMMAND} -E copy
+#   ${OBJ_DIR}/libMdict.rootmap ${LIB_DIR}/libMdict.rootmap
+# )
 
 # Boost unit test setup
-find_package(Boost CONFIG)
+find_package(Boost CONFIG COMPONENTS unit_test_framework REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 
 # Add and configure unit tests
-file(GLOB TEST_SRCS ${CMAKE_SOURCE_DIR}/test/*.cpp)
-foreach(testSrc ${TEST_SRCS})
-  get_filename_component(testName ${testSrc} NAME_WE)
-  add_executable(${testName} ${testSrc} ${INCLUDE_DIR})
-  target_link_libraries(${testName} ${Boost_LIBRARIES} ${libname})
-  set_target_properties(${testName} PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/testBin)
-  add_test(NAME ${testName}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/testBin
-    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/testBin/${testName})
-endforeach()
+enable_testing()
+add_subdirectory(${PROJECT_SOURCE_DIR}/tests/unit)
