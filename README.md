@@ -51,7 +51,11 @@ gTAF->Help();
 
 # To compile the software:
 - New: use CMake to build the project:
-> mkdir build; cd build; cmake ..; cmake --build . --target install
+```
+    mkdir build 
+    cd build
+    cmake ..
+``` 
 - Prefered method, use the command (from anywhere): maketaf
 - Alternative method 1) (equivalent to maketaf script)
 > cd code; make
