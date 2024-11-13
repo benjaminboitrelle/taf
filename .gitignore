@@ -36,3 +36,5 @@ doc/taf_shortDoc\.out
 *.toc
 
 .DS_Store
+
+build

@@ -50,6 +50,12 @@ gTAF->Help();
   TAF -run runNumber -debug 2 
 
 # To compile the software:
+- New: use CMake to build the project:
+```
+    mkdir build 
+    cd build
+    cmake ..
+``` 
 - Prefered method, use the command (from anywhere): maketaf
 - Alternative method 1) (equivalent to maketaf script)
 > cd code; make
