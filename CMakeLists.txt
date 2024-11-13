@@ -3,41 +3,30 @@ cmake_minimum_required(VERSION 3.24)
 
 # Project name and language
 project(TAF LANGUAGES CXX)
+set(libname lib${PROJECT_NAME})
 
 # Enable testing
 enable_testing()
 
-# Define the library name
-set(libname lib${PROJECT_NAME})
-message("Library name: ${libname}")
-
-# Set directory paths
+# Directory setup
 set(DTDIR ${PROJECT_SOURCE_DIR})
 set(BUILD_DIR "${DTDIR}/bin/bin")
-set(OBJ_DIR "${DTDIR}/bin/obj")
 set(LIB_DIR "${DTDIR}/bin/lib")
-
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BUILD_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${LIB_DIR})
 set(CMAKE_INSTALL_LIBDIR ${LIB_DIR})
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OBJ_DIR})
-
-message("Build directories:")
-message("  BUILD_DIR = ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
-message("  OBJ_DIR   = ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
-message("  LIB_DIR   = ${CMAKE_INSTALL_LIBDIR}")
 
 # C++ standard and compiler flags
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fPIC -O2 -g")
 
-# Clang-specific settings
+# Compiler-specific settings for Clang
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   set(CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS} -undefined dynamic_lookup")
 endif()
 
-# Define source and include directories
+# Include and source directories
 set(INCLUDE_DIR ${PROJECT_SOURCE_DIR}/code/include)
 set(SRC_DIR ${PROJECT_SOURCE_DIR}/code/src)
 
@@ -161,56 +150,24 @@ include(${ROOT_USE_FILE})
 include_directories(${ROOT_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR})
 link_libraries(${ROOT_LIBRARIES})
 
-# Generate dictionaries
-message("Generating DT dictionary")
+# Generate ROOT dictionaries for DT and M components
 ROOT_GENERATE_DICTIONARY(DTdict ${DTHDRS} LINKDEF ${INCLUDE_DIR}/DTLinkDef.h)
-
-message("Generating M dictionary")
 ROOT_GENERATE_DICTIONARY(Mdict ${MHDRS} LINKDEF ${INCLUDE_DIR}/MLinkDef.h)
 
 # Create library
 include_directories(${INCLUDE_DIR})
 add_library(${libname} SHARED ${DTSRCS} ${MSRCS} DTdict.cxx Mdict.cxx)
+set_target_properties(${libname} PROPERTIES PREFIX "")
 target_link_libraries(${libname} PUBLIC ${ROOT_LIBRARIES})
 
 # Create executable
-add_executable(TAF ${SRC_DIR}/MMain.cxx)
-target_link_libraries(TAF PUBLIC ${libname} ${ROOT_LIBRARIES})
+add_executable(${PROJECT_NAME} ${SRC_DIR}/MMain.cxx)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${libname} ${ROOT_LIBRARIES})
 
-# Output properties
-set_target_properties(${PROJECT_NAME}
-  PROPERTIES
-  ARCHIVE_OUTPUT_DIRECTORY ${OBJ_DIR}
-  LIBRARY_OUTPUT_DIRECTORY ${LIB_DIR}
-  RUNTIME_OUTPUT_DIRECTORY ${BUILD_DIR}
-)
-
-# # Custom commands for dictionary files
-# add_custom_command(TARGET ${libname} POST_BUILD
-#   COMMAND ${CMAKE_COMMAND} -E copy
-#   ${OBJ_DIR}/libTAF.so ${LIB_DIR}/libTAF.so
-# )
-# add_custom_command(TARGET ${libname} POST_BUILD
-#   COMMAND ${CMAKE_COMMAND} -E copy
-#   ${OBJ_DIR}/libDTdict_rdict.pcm ${LIB_DIR}/libDTdict_rdict.pcm
-# )
-# add_custom_command(TARGET ${libname} POST_BUILD
-#   COMMAND ${CMAKE_COMMAND} -E copy
-#   ${OBJ_DIR}/libMdict_rdict.pcm ${LIB_DIR}/libMdict_rdict.pcm
-# )
-# add_custom_command(TARGET ${libname} POST_BUILD
-#   COMMAND ${CMAKE_COMMAND} -E copy
-#   ${OBJ_DIR}/libDTdict.rootmap ${LIB_DIR}/libDTdict.rootmap
-# )
-# add_custom_command(TARGET ${libname} POST_BUILD
-#   COMMAND ${CMAKE_COMMAND} -E copy
-#   ${OBJ_DIR}/libMdict.rootmap ${LIB_DIR}/libMdict.rootmap
-# )
+# Installation settings for the library
+install(TARGETS ${libname} LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 # Boost unit test setup
 find_package(Boost CONFIG COMPONENTS unit_test_framework REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
-
-# Add and configure unit tests
-enable_testing()
 add_subdirectory(${PROJECT_SOURCE_DIR}/tests/unit)
