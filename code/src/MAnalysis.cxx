@@ -1119,7 +1119,7 @@ std::string MimosaAnalysis::CreateGlobalResultDir()
     return "";
   }
 
-  std::string resultDirName = fWorkingDirectory + "/results_ana_M" + std::to_string(MimosaType) + "/";
+  const std::string resultDirName = fWorkingDirectory + "/results_ana_M" + std::to_string(MimosaType) + "/";
   fTool.LocalizeDirName(resultDirName.data()); // JB 2011/07/07
 
   if (MimoDebug)
@@ -2189,7 +2189,7 @@ bool MimosaAnalysis::CheckIfDone(const Option_t *Option)
   auto aReturnCode{true};
 
   // Unordered map to store the mapping between options and their associated checks
-  std::unordered_map<std::string, std::pair<Bool_t MimosaAnalysis::*, std::string>> checks = {
+  const std::unordered_map<std::string, std::pair<Bool_t MimosaAnalysis::*, std::string>> checks = {
       {"clear", {&MimosaAnalysis::fClearDone, "Please run Clear() First"}},
       {"init", {&MimosaAnalysis::fInitDone, "Please run InitSession() First"}},
       {"mimosall", {&MimosaAnalysis::fMimosaDone, "Please run an analysis method MimosaXXX() First"}},
