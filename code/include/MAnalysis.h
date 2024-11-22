@@ -308,7 +308,7 @@ private:
   float VofPix2x2[4];
   int IndexU2x2[4];
   int IndexV2x2[4];
-  Short_t IndexOfCluster2x2;
+  short IndexOfCluster2x2;
 
   float TotalCharge3x3; // Cluster charge limited to 3x3 sub-cluster
   float Qof3x3[9];
@@ -804,9 +804,9 @@ public:
   void MimosaPro(int MaxEvt, float TrackHitDist, float S2N_seed, float S2N_neighbour, int submatrix, int GeoMatrix, Option_t *SaveAlign, int UseHitMap = 0, int WriteMissedHits = 0, int WriteGoodHits = 0);
   void MimosaFakerate(int MaxEvt, float S2N_seed, float S2N_neighbour, int submatrix = 0, int GeoMatrix = 0);
   void MimosaCalibration(int MaxEvt, float S2N_seed = 0., float S2N_neighbour = 0., float ChargeAroundSeedCutMax = 5000., int submatrix = 0, int GeoMatrix = 0);
-  void MimosaMiniVectors(int MaxEvt, int TrackHitDist, Short_t plane0, float S2N_seed0, float S2N_neighbour0, int submatrix0, int GeoMatrix0, Short_t plane1, float S2N_seed1, float S2N_neighbour1, int submatrix1, int GeoMatrix1);
-  void MimosaPro2Planes(int MaxEvt, int TrackHitDist, Short_t plane0, float S2N_seed0, float S2N_neighbour0, int submatrix0, Short_t plane1, float S2N_seed1, float S2N_neighbour1, int submatrix1, int GeoMatrix);
-  void MimosaVertex(int MaxEvt, Short_t plane1, Short_t plane2);
+  void MimosaMiniVectors(int MaxEvt, int TrackHitDist, short plane0, float S2N_seed0, float S2N_neighbour0, int submatrix0, int GeoMatrix0, short plane1, float S2N_seed1, float S2N_neighbour1, int submatrix1, int GeoMatrix1);
+  void MimosaPro2Planes(int MaxEvt, int TrackHitDist, short plane0, float S2N_seed0, float S2N_neighbour0, int submatrix0, short plane1, float S2N_seed1, float S2N_neighbour1, int submatrix1, int GeoMatrix);
+  void MimosaVertex(int MaxEvt, short plane1, short plane2);
   void MimosaVertexFinder(int MaxEvt, int submatrix, int GeoMatrix, float chi2Cut);
   void MimosaCluster(int MaxEvt, float S2N_seed = 0., float S2N_neighbour = 0., int submatrix = 0, int GeoMatrix = 0);                                                                               // JB 2014/01/17
   void MimosaProLadder(int MaxEvt, int TrackHitDist, float S2N_seed, float S2N_neighbour, int submatrix, int GeoMatrix, Option_t *SaveAlign, int UseHitMap, int WriteMissedHits, int WriteGoodHits); // JB 2014/02/1

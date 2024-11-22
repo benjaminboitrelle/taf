@@ -2919,14 +2919,14 @@ void MimosaAnalysis::ClusterCharges_compute(DAuthenticHit *thehit)
     snsumspiral[iPix] = 0.;
   }
 
-  for (Short_t i = 0; i < 4; i++)
+  for (short i = 0; i < 4; i++)
   {
     Qof2x2[i] = 0.;
     UofPix2x2[i] = 0.;
     VofPix2x2[i] = 0.;
   }
 
-  for (Short_t i = 0; i < 9; i++)
+  for (short i = 0; i < 9; i++)
   {
     Qof3x3[i] = 0.;
     UofPix3x3[i] = 0.;
@@ -2934,7 +2934,7 @@ void MimosaAnalysis::ClusterCharges_compute(DAuthenticHit *thehit)
     IndexofPix3x3[i] = 0;
   }
 
-  for (Short_t i = 0; i < 25; i++)
+  for (short i = 0; i < 25; i++)
   {
     Qof5x5[i] = 0.;
     UofPix5x5[i] = 0.;
@@ -3264,7 +3264,7 @@ void MimosaAnalysis::ClusterCharges_compute(DAuthenticHit *thehit)
       if (as < 0)
       {
         angle = 2. * pi - angle;
-      }                                                                         // build an angle from 0->2pi
+      } // build an angle from 0->2pi
       spiralIndex = firstIndex + (int)floor(nofPixels * angle / 2. / pi + 0.5); // +.5 is a trick to round to nearest int
       if (MimoDebug > 1)
       {
@@ -3394,15 +3394,15 @@ void MimosaAnalysis::ClusterCharges_compute(DAuthenticHit *thehit)
   ChargeAroundSeed = TotalCharge - qqordered[0]; // JB 2010/07/23
   ChargeInCross = qspiral[1] + qspiral[3] + qspiral[5] + qspiral[7];
   ChargeInX = qspiral[2] + qspiral[4] + qspiral[6] + qspiral[8];
-  for (Short_t i = 9; i <= 24; i++)
+  for (short i = 9; i <= 24; i++)
     ChargeInCrown1 += qspiral[i];
-  for (Short_t i = 25; i <= 48; i++)
+  for (short i = 25; i <= 48; i++)
     ChargeInCrown2 += qspiral[i];
 
   //-- compute charges limited to 3x3 cluster
   // (Note that if NofPixelsInCluster<25, arrays are updated with 0s)
   // pixel with index 0 is the seed, in the center
-  for (Short_t i = 0; i < 25; i++)
+  for (short i = 0; i < 25; i++)
   {
     UofPix5x5[i] = UofPixspiral[i];
     VofPix5x5[i] = VofPixspiral[i];
@@ -3413,7 +3413,7 @@ void MimosaAnalysis::ClusterCharges_compute(DAuthenticHit *thehit)
   //-- compute charges limited to 3x3 cluster
   // (Note that if NofPixelsInCluster<9, arrays are updated with 0s)
   // pixel with index 0 is the seed, in the center
-  for (Short_t i = 0; i < 9; i++)
+  for (short i = 0; i < 9; i++)
   {
     UofPix3x3[i] = UofPixspiral[i];
     VofPix3x3[i] = VofPixspiral[i];
@@ -3445,7 +3445,7 @@ void MimosaAnalysis::ClusterCharges_compute(DAuthenticHit *thehit)
   Qof2x2[0] = qspiral[0];
   UofPix2x2[0] = UofPixspiral[0];
   VofPix2x2[0] = VofPixspiral[0];
-  for (Short_t i = 1; i < 4; i++)
+  for (short i = 1; i < 4; i++)
   {
     Qof2x2[i] = qspiral[2 * IndexOfCluster2x2 + i];
     UofPix2x2[i] = UofPixspiral[2 * IndexOfCluster2x2 + i];
@@ -3520,7 +3520,7 @@ void MimosaAnalysis::ClusterCharges_fill(DAuthenticHit *thehit, int ievt)
     h_SNRratioL->Fill(snqordered[0] / snqordered[1]);
 
   // Restricted to 3x3 pixels cluster around seed
-  for (Short_t i = 0; i < 9; i++)
+  for (short i = 0; i < 9; i++)
   {
     hQofPix3x3->Fill(Qof3x3[i]);
   }
@@ -4885,11 +4885,11 @@ void MimosaAnalysis::FakeRate_end(int rateNormalisation)
   }
 
   // Fill the cumulative distribution
-  for (Short_t ib = 1; ib <= hNhitRateperpixel->GetNbinsX(); ib++)
+  for (short ib = 1; ib <= hNhitRateperpixel->GetNbinsX(); ib++)
   {
     int idx = hNhitRateperpixel->GetNbinsX() - ib - 1;
-    // for( Short_t jb=1; jb<=ib; jb++) {
-    for (Short_t jb = 1; jb <= idx; jb++)
+    // for( short jb=1; jb<=ib; jb++) {
+    for (short jb = 1; jb <= idx; jb++)
     {
       hPixelsPerFakeRate->AddBinContent(ib, hNhitRateperpixel->GetBinContent(jb));
     }
@@ -5054,7 +5054,7 @@ void MimosaAnalysis::MiniVector_compute()
 
   if (MimoDebug > 1)
   {
-    for (Short_t iplane = 0; iplane < 2; iplane++)
+    for (short iplane = 0; iplane < 2; iplane++)
     { // loop on planes
       cout << "MiniVector_compute: position for plane: " << iplane << endl;
       // cout << "  plane pos: " << << ", " << << ", " << << " and tilt " << << ", " << << ", " << << endl;
