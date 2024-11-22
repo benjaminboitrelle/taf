@@ -56,6 +56,7 @@
 #endif
 #include "DSetup.h"
 #include <unordered_map>
+#include <filesystem>
 
 ClassImp(MimosaAnalysis)
 
@@ -1022,7 +1023,7 @@ void MimosaAnalysis::MergingPDFFiles(void)
   char fOutName[200];
   sprintf(fOutName, "run%dPl%d_ClCharge", RunNumber, ThePlaneNumber);
   sprintf(fOutName, "%s", fTool.LocalizeDirName(fOutName));
-  TString EPSName_final = TString(CreateGlobalResultDir()) + TString(fOutName) + TString(".pdf");
+  TString EPSName_final = TString(CreateGlobalResultDir().c_str()) + TString(fOutName) + TString(".pdf");
 
   TString command;
   TString ListOfFiles("");
@@ -1030,7 +1031,7 @@ void MimosaAnalysis::MergingPDFFiles(void)
   // cout << endl;
   for (int i = 0; i < NPages; i++)
   {
-    TString TmpFileName = TString(CreateGlobalResultDir()) + TString(fOutName) + TString("_tmpFile") + long(i + 1) + (".pdf");
+    TString TmpFileName = TString(CreateGlobalResultDir().c_str()) + TString(fOutName) + TString("_tmpFile") + long(i + 1) + (".pdf");
     // cout << "File " << i+1 << " to be merged " << TmpFileName.Data() << endl;
     ListOfFiles += TmpFileName + TString("   ");
   }
@@ -1103,9 +1104,7 @@ int MimosaAnalysis::OpenInputFile()
   }
 }
 
-//______________________________________________________________________________
-//
-const char *MimosaAnalysis::CreateGlobalResultDir()
+std::string MimosaAnalysis::CreateGlobalResultDir()
 {
   // Create Results/#### directory to store results
   //
@@ -1114,20 +1113,21 @@ const char *MimosaAnalysis::CreateGlobalResultDir()
   if (!CheckIfDone("init"))
     return ""; // correction from 0;, JB 2009/07/17
 
-  if (!MimosaType)
+  if (MimosaType == 0)
+  {
     Error("CreateGlobalResultDir", "MimosaType not set! Please run MimosaPro first");
+    return "";
+  }
 
-  ResultDirName = fWorkingDirectory + "/results_ana_M"; // VR 2014/06/30 Replace DTDIR by fWorkingDirectory
-  ResultDirName += MimosaType;
-  ResultDirName += "/";
-  fTool.LocalizeDirName(&ResultDirName); // JB 2011/07/07
+  std::string resultDirName = fWorkingDirectory + "/results_ana_M" + std::to_string(MimosaType) + "/";
+  fTool.LocalizeDirName(resultDirName.data()); // JB 2011/07/07
 
   if (MimoDebug)
-    cout << "Global Result Dir : " << ResultDirName.Data() << endl;
+    std::cout << "Global Result Dir : " << resultDirName << std::endl;
 
-  gSystem->mkdir(ResultDirName.Data(), 1);
+  std::filesystem::create_directories(resultDirName);
 
-  return ResultDirName.Data();
+  return resultDirName;
 }
 
 //______________________________________________________________________________
@@ -2011,7 +2011,7 @@ void MimosaAnalysis::HotPixel_init(int useMap)
 
   sprintf(HotPixelFileName, "hotPixelMap_run%d_pl%d.root", RunNumber, ThePlaneNumber);
   sprintf(HotPixelFileName, "%s", fTool.LocalizeDirName(HotPixelFileName));
-  gSystem->cd(CreateGlobalResultDir());
+  gSystem->cd(CreateGlobalResultDir().c_str());
 
   if (TheUsePixelMap && Option_read_Pixel_map == 1)
   {

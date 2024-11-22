@@ -100,13 +100,13 @@ private:
   // Files and directories
   // ------------------------
   TFile *fileInputTree;
-  ofstream outFileGoodEvt;    //!
-  ofstream outFileBadEvt;     //!
-  ofstream csvfile;           //!
-  TFile *theCorFile;          //!
-  TString DTDIR;              // set from the environment variable DTDIR = TAF installation directory
-  TString fLaunchedDirectory; // directory where taf has been launched // VR 2014/06/30
-  TString fWorkingDirectory;  // directory where taf will work, choose in MimosaAnalysis::MimosaAnalysis() // VR 2014/06/30
+  ofstream outFileGoodEvt;       //!
+  ofstream outFileBadEvt;        //!
+  ofstream csvfile;              //!
+  TFile *theCorFile;             //!
+  TString DTDIR;                 // set from the environment variable DTDIR = TAF installation directory
+  TString fLaunchedDirectory;    // directory where taf has been launched // VR 2014/06/30
+  std::string fWorkingDirectory; // directory where taf will work, choose in MimosaAnalysis::MimosaAnalysis() // VR 2014/06/30
   // TString ROOTDIR; // removed by JB 2011/04/12
   TString ResultDirName; // JB 2011/04/12
   DGlobalTools fTool;    // JB 2011/07/18
@@ -132,7 +132,7 @@ private:
   float calibration;
   float NoiseScope;
 
-  int MimosaType;
+  int MimosaType{0};
   int RunNumber;
   int ThePlaneNumber;
   int ThePlaneNumber2; // JB 2011/10/30
@@ -508,7 +508,7 @@ private:
     if (!ptr)
       ptr = 0;
   };
-  const char *CreateGlobalResultDir();
+  std::string CreateGlobalResultDir();
   void PreparePost();
   int CorStatus; // corpar file status.
   void SetCalibration(float acalibration = 1) { calibration = acalibration; }
