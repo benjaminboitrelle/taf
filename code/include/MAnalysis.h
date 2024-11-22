@@ -264,7 +264,7 @@ private:
   int LineSizeOfCluster; // JB 2014/03/31
   int ColumnSizeOfCluster;
 
-  typedef enum
+  enum class ClusterType : int
   {
     one_pix = 1,
     two_pix_row,
@@ -284,9 +284,9 @@ private:
     six_pix_2col3row,
     six_others,
     more_than_six
-  } clusterTypeDef;
-  clusterTypeDef ClusterGeometricalType;
-  clusterTypeDef ClusterGeometricalTypeBeyond4;
+  };
+  ClusterType ClusterGeometricalType;
+  ClusterType ClusterGeometricalTypeBeyond4;
 
   int IndexOfMaxPixel; // index of the pixel with the highest charge (in qonly array)
 
@@ -523,6 +523,7 @@ private:
 
   void ClusterCharges_init(); // JB 2010/06/03
   void ClusterCharges_compute(DAuthenticHit *thehit);
+  void SetClusterGeometricalType(int nPixelsInCluster, int lineSizeOfCluster, int columnSizeOfCluster);
   void ClusterCharges_fill(DAuthenticHit *thehit, int ievt);
   void ClusterCharges_end();
 
