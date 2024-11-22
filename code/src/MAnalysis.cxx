@@ -55,6 +55,7 @@
 #include "MAnalysis.h"
 #endif
 #include "DSetup.h"
+#include <unordered_map>
 
 ClassImp(MimosaAnalysis)
 
@@ -2183,98 +2184,32 @@ bool MimosaAnalysis::CheckIfDone(const Option_t *Option)
   // Modified: JB 2010/08/30 for MiniVectos
   // Modified: JB 2010/09/10 for general Mimosa flag
 
-  TString opts(Option);
-  opts.ToLower();
-  bool aReturnCode = kTRUE;
+  std::string opts{Option};
+  std::transform(opts.begin(), opts.end(), opts.begin(), ::tolower);
+  auto aReturnCode{true};
 
-  if (opts.Contains("clear"))
-  {
-    if (!fClearDone)
-    {
-      Warning("CheckIfDone()", "Please run Clear() First");
-      aReturnCode = kFALSE;
-    };
-  }
+  // Unordered map to store the mapping between options and their associated checks
+  std::unordered_map<std::string, std::pair<Bool_t MimosaAnalysis::*, std::string>> checks = {
+      {"clear", {&MimosaAnalysis::fClearDone, "Please run Clear() First"}},
+      {"init", {&MimosaAnalysis::fInitDone, "Please run InitSession() First"}},
+      {"mimosall", {&MimosaAnalysis::fMimosaDone, "Please run an analysis method MimosaXXX() First"}},
+      {"mimosapro", {&MimosaAnalysis::fMimosaProDone, "Please run MimosaPro() First"}},
+      {"mimosafakerate", {&MimosaAnalysis::fMimosaFakerateDone, "Please run MimosaFakerate() First"}},
+      {"mimosacalibration", {&MimosaAnalysis::fMimosaCalibrationDone, "Please run MimosaCalibration() First"}},
+      {"mimosaminivectors", {&MimosaAnalysis::fMimosaMiniVectorsDone, "Please run MimosaMiniVectors() First"}},
+      {"mimosapro2planes", {&MimosaAnalysis::fMimosaPro2PlanesDone, "Please run MimosaPro2Planes() First"}},
+      {"mimosaimaging", {&MimosaAnalysis::fMimosaImagingDone, "Please run MimosaImaging() First"}},
+      {"MCGeneration", {&MimosaAnalysis::fIfMCGeneration, "Please run MimosaGeneration() First"}}};
 
-  if (opts.Contains("init"))
+  // Iterate through each option in the map
+  for (const auto &check : checks)
   {
-    if (!fInitDone)
+    if (opts.find(check.first) == std::string::npos || (this->*(check.second.first))) // Option is no part of the given string or corresponding flag is true
     {
-      Warning("CheckIfDone()", "Please run InitSession() First");
-      aReturnCode = kFALSE;
-    };
-  }
-
-  if (opts.Contains("mimosall")) // JB 2010/09/10
-  {
-    if (!fMimosaDone)
-    {
-      Warning("CheckIfDone()", "Please run an anlysis method MimosaXXX() First");
-      aReturnCode = kFALSE;
-    };
-  }
-
-  if (opts.Contains("mimosapro"))
-  {
-    if (!fMimosaProDone)
-    {
-      Warning("CheckIfDone()", "Please run MimosaPro() First");
-      aReturnCode = kFALSE;
-    };
-  }
-
-  if (opts.Contains("mimosafakerate")) // JB 2010/07/26
-  {
-    if (!fMimosaFakerateDone)
-    {
-      Warning("CheckIfDone()", "Please run MimosaFakerate() First");
-      aReturnCode = kFALSE;
-    };
-  }
-
-  if (opts.Contains("mimosacalibration")) // JB 2010/07/27
-  {
-    if (!fMimosaCalibrationDone)
-    {
-      Warning("CheckIfDone()", "Please run MimosaCalibration() First");
-      aReturnCode = kFALSE;
-    };
-  }
-
-  if (opts.Contains("mimosaminivectors")) // JB 2010/08/30
-  {
-    if (!fMimosaMiniVectorsDone)
-    {
-      Warning("CheckIfDone()", "Please run MimosaMiniVectors() First");
-      aReturnCode = kFALSE;
-    };
-  }
-
-  if (opts.Contains("mimosapro2planes")) // JB 2013/05/01
-  {
-    if (!fMimosaPro2PlanesDone)
-    {
-      Warning("CheckIfDone()", "Please run MimosaPro2Planes() First");
-      aReturnCode = kFALSE;
-    };
-  }
-
-  if (opts.Contains("mimosaimaging")) // JB 2013/05/01
-  {
-    if (!fMimosaImagingDone)
-    {
-      Warning("CheckIfDone()", "Please run MimosaImaging() First");
-      aReturnCode = kFALSE;
-    };
-  }
-
-  if (opts.Contains("MCGeneration")) // AP 2015/04/02
-  {
-    if (!fIfMCGeneration)
-    {
-      Warning("CheckIfDone()", "Please run MimosaGeneration() First");
-      aReturnCode = kFALSE;
-    };
+      continue;
+    }
+    Warning("CheckIfDone()", "%s", check.second.second.c_str()); // Print the warning message
+    aReturnCode = false;
   }
 
   return aReturnCode;

@@ -74,6 +74,8 @@
 #include "DSetup.h"
 //---ADC
 
+#include <string>
+
 class MRaw;
 class MRax;
 
