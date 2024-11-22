@@ -58,7 +58,8 @@ BOOST_AUTO_TEST_CASE(test_CreateGlobalResultDir_MimosaType_not_set)
 {
     auto analyse{MimosaAnalysis()};
     analyse.fInitDone = true;
-    BOOST_ASSERT(analyse.CreateGlobalResultDir());
+    std::string message{""};
+    BOOST_CHECK_EQUAL(message, analyse.CreateGlobalResultDir());
 }
 
 BOOST_AUTO_TEST_CASE(test_CreateGlobalResultDir_pass)
