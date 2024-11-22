@@ -5,7 +5,7 @@
 #define private public
 #include "code/include/MAnalysis.h"
 
-BOOST_AUTO_TEST_SUITE(MimosaAnalysis_UT)
+BOOST_AUTO_TEST_SUITE(test_CheckIfDone)
 
 BOOST_AUTO_TEST_CASE(test_CheckIfDone_false_return)
 {
@@ -40,6 +40,24 @@ BOOST_AUTO_TEST_CASE(test_CheckIfDone_multiple_inputs)
 
     auto check_options = "init,mimosapro";
     BOOST_CHECK_EQUAL(false, analyse.CheckIfDone(check_options));
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(tests_CreateGlobalResultDir)
+
+BOOST_AUTO_TEST_CASE(test_CreateGlobalResultDir_init_not_done)
+{
+    auto analyse{MimosaAnalysis()};
+    analyse.fClearDone = false;
+    std::string message{""};
+    BOOST_CHECK_EQUAL(message, analyse.CreateGlobalResultDir());
+}
+
+BOOST_AUTO_TEST_CASE(test_CreateGlobalResultDir_MimosaType_not_set)
+{
+    auto analyse{MimosaAnalysis()};
+    BOOST_ASSERT(analyse.CreateGlobalResultDir());
 }
 
 BOOST_AUTO_TEST_SUITE_END()
