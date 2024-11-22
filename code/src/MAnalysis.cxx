@@ -116,7 +116,7 @@ MimosaAnalysis::MimosaAnalysis()
   sprintf(RootFile, "");
   theCorFile = 0;
 
-  fSession = NULL;
+  fSession = nullptr;
   // MimoDebug = fSession->GetDebug();
   MimoDebug = 0;
   cout << endl;
@@ -159,446 +159,446 @@ MimosaAnalysis::MimosaAnalysis()
   }
 
   // Initializing the pointers declared in MHist.h
-  saved = NULL;
-  dir = NULL;
+  saved = nullptr;
+  dir = nullptr;
 
-  hdummy = NULL;
+  hdummy = nullptr;
 
   //------------------------------------------------------------------------------
   //----- general control
   //------------------------------------------------------------------------------
-  selection = NULL;
-  MainCanvas = NULL;
+  selection = nullptr;
+  MainCanvas = nullptr;
 
   //------------------------------------------------------------------------------
   // Charges, noise, S/N, pixel multiplicity plots for SELECTED clusters
   //------------------------------------------------------------------------------
 
   // seed
-  hChargeInSeed = NULL;
-  hRealTrackNoise = NULL;
-  hsn = NULL;
-  hSNReal = NULL;
+  hChargeInSeed = nullptr;
+  hRealTrackNoise = nullptr;
+  hsn = nullptr;
+  hSNReal = nullptr;
 
   // 2nd higest S/N pixel
-  hS2N2ndRH = NULL;
-  hSNNReal = NULL;
-  hind = NULL;
+  hS2N2ndRH = nullptr;
+  hSNNReal = nullptr;
+  hind = nullptr;
 
   // all pixels
-  hChargeInCluster = NULL;
+  hChargeInCluster = nullptr;
   for (int i = 0; i < MaxNofPixelsInClusterMax; i++)
   {
-    hqcn[i] = NULL;
-    hqcngeom[i] = NULL;
-    hindivq[i] = NULL;
-    hsnn[i] = NULL;
+    hqcn[i] = nullptr;
+    hqcngeom[i] = nullptr;
+    hindivq[i] = nullptr;
+    hsnn[i] = nullptr;
   }
 
-  hChargeOrder1 = NULL;
-  hChargeOrder2 = NULL;
-  hChargeOrder3 = NULL;
-  hChargeOrder4 = NULL;
-  hChargeOrder5 = NULL;
-  hChargeOrder6 = NULL;
-  hChargeOrder7 = NULL;
-  hChargeOrder8 = NULL;
-  hChargeOrder9 = NULL;
+  hChargeOrder1 = nullptr;
+  hChargeOrder2 = nullptr;
+  hChargeOrder3 = nullptr;
+  hChargeOrder4 = nullptr;
+  hChargeOrder5 = nullptr;
+  hChargeOrder6 = nullptr;
+  hChargeOrder7 = nullptr;
+  hChargeOrder8 = nullptr;
+  hChargeOrder9 = nullptr;
 
   // TH2F *hChargeCor_1_2;
   // TH2F *hChargeCor_1_3 ;
   // TH2F *hChargeCor_1_4 ;
   // TH2F *hChargeCor_2_3 ;
 
-  hChargeRap_1_over_2 = NULL;
-  hChargeRap_1_over_3 = NULL;
-  hChargeRap_1_over_4 = NULL;
-  hChargeRap_2_over_3 = NULL;
+  hChargeRap_1_over_2 = nullptr;
+  hChargeRap_1_over_3 = nullptr;
+  hChargeRap_1_over_4 = nullptr;
+  hChargeRap_2_over_3 = nullptr;
 
-  hQofPix3x3 = NULL;
-  hQ3x34 = NULL;
-  hQ3x35 = NULL;
-  hQ3x345 = NULL;
-  hQ3x327 = NULL;
-  hQ3x345r = NULL;
-  hQ3x327r = NULL;
+  hQofPix3x3 = nullptr;
+  hQ3x34 = nullptr;
+  hQ3x35 = nullptr;
+  hQ3x345 = nullptr;
+  hQ3x327 = nullptr;
+  hQ3x345r = nullptr;
+  hQ3x327r = nullptr;
 
   // cluster wise
-  hsnc = NULL;
-  hChargeSum_4 = NULL;
-  hqc_c = NULL;
-  hqc = NULL;
-  hChargeInCross = NULL;
-  hChargeInX = NULL;
-  hChargeInCrown1 = NULL;
-  hChargeInCrown2 = NULL;
-  hqcel = NULL;
-  hsnc1 = NULL;
-  hoptimalsize = NULL;
-  hSNneighbour = NULL;
-  hSNseedvsSNneighbour = NULL;
-  hQseedvsQcluster = NULL;
-  hQseedvsQneighbour = NULL;
-  hSNseedvsQcluster = NULL;
-  hnpix_c = NULL;
-  hnWindows_c = NULL;
-  h2DWindows = NULL;
-  hnpixCumul_c = NULL;
-  hNomEffic = NULL;
+  hsnc = nullptr;
+  hChargeSum_4 = nullptr;
+  hqc_c = nullptr;
+  hqc = nullptr;
+  hChargeInCross = nullptr;
+  hChargeInX = nullptr;
+  hChargeInCrown1 = nullptr;
+  hChargeInCrown2 = nullptr;
+  hqcel = nullptr;
+  hsnc1 = nullptr;
+  hoptimalsize = nullptr;
+  hSNneighbour = nullptr;
+  hSNseedvsSNneighbour = nullptr;
+  hQseedvsQcluster = nullptr;
+  hQseedvsQneighbour = nullptr;
+  hSNseedvsQcluster = nullptr;
+  hnpix_c = nullptr;
+  hnWindows_c = nullptr;
+  h2DWindows = nullptr;
+  hnpixCumul_c = nullptr;
+  hNomEffic = nullptr;
 
-  hDuplicate_2DMult = NULL;
-  hDuplicate_DeltaTS = NULL;
-  hDuplicate_npixc = NULL;
-  hDuplicate_npixc_vs_TrkDistToDiode = NULL;
+  hDuplicate_2DMult = nullptr;
+  hDuplicate_DeltaTS = nullptr;
+  hDuplicate_npixc = nullptr;
+  hDuplicate_npixc_vs_TrkDistToDiode = nullptr;
 
   static const int jpixmax = 8;
   for (int i = 0; i < jpixmax; i++)
   {
-    hsn_pix_0[i] = NULL;
-    hsn_pix_1[i] = NULL;
-    hsn_seed_vs_pix_0[i] = NULL;
-    hsn_seed_vs_pix_1[i] = NULL;
+    hsn_pix_0[i] = nullptr;
+    hsn_pix_1[i] = nullptr;
+    hsn_seed_vs_pix_0[i] = nullptr;
+    hsn_seed_vs_pix_1[i] = nullptr;
   }
 
   // canvas
-  // TCanvas *cClusterCharge = NULL;
+  // TCanvas *cClusterCharge = nullptr;
 
   //------------------------------------------------------------------------------
   //--- Charges for calibration peak
   //------------------------------------------------------------------------------
 
-  hqSeedCalibration = NULL;
-  hqNeighbourCalibration = NULL;
-  hqSeedVsNeighbourCalibration = NULL;
+  hqSeedCalibration = nullptr;
+  hqNeighbourCalibration = nullptr;
+  hqSeedVsNeighbourCalibration = nullptr;
 
-  cCalibration = NULL;
-  Calib_distr1 = NULL;
-  Calib_distr2 = NULL;
-  Calib_distr3 = NULL;
+  cCalibration = nullptr;
+  Calib_distr1 = nullptr;
+  Calib_distr2 = nullptr;
+  Calib_distr3 = nullptr;
 
   //------------------------------------------------------------------------------
   //----- Comparebadgoodraw()
   //------------------------------------------------------------------------------
-  hraw1badone = NULL;
-  hraw1goodone = NULL;
-  hraw1goodone_time = NULL;
-  hraw1badone_time = NULL;
-  hraw1goodoneNoise_time = NULL;
-  hraw1badoneNoise_time = NULL;
-  hRealTrackNoise_time = NULL;
+  hraw1badone = nullptr;
+  hraw1goodone = nullptr;
+  hraw1goodone_time = nullptr;
+  hraw1badone_time = nullptr;
+  hraw1goodoneNoise_time = nullptr;
+  hraw1badoneNoise_time = nullptr;
+  hRealTrackNoise_time = nullptr;
 
-  hraw1PFrfr1GOOD = NULL;
-  hraw1PFrfr1BAD = NULL;
-  hraw1PFrfr1GOOD_time = NULL;
-  hraw1PFrfr1BAD_time = NULL;
-  hraw1PFrfr2GOOD = NULL;
-  hraw1PFrfr2BAD = NULL;
-  hraw1PFrfr2GOOD_time = NULL;
-  hraw1PFrfr2BAD_time = NULL;
-  hraw1NoiseGOOD_time = NULL;
-  hraw1NoiseBAD_time = NULL;
+  hraw1PFrfr1GOOD = nullptr;
+  hraw1PFrfr1BAD = nullptr;
+  hraw1PFrfr1GOOD_time = nullptr;
+  hraw1PFrfr1BAD_time = nullptr;
+  hraw1PFrfr2GOOD = nullptr;
+  hraw1PFrfr2BAD = nullptr;
+  hraw1PFrfr2GOOD_time = nullptr;
+  hraw1PFrfr2BAD_time = nullptr;
+  hraw1NoiseGOOD_time = nullptr;
+  hraw1NoiseBAD_time = nullptr;
 
-  hraw1Noise = NULL;
-  hraw1Pedestal = NULL;
-  hraw1CDS = NULL;
-  hraw1Signal = NULL;
-  hraw1Noise_time = NULL;
-  hraw1Pedestal_time = NULL;
-  hraw1CDS_time = NULL;
-  hraw1Signal_time = NULL;
+  hraw1Noise = nullptr;
+  hraw1Pedestal = nullptr;
+  hraw1CDS = nullptr;
+  hraw1Signal = nullptr;
+  hraw1Noise_time = nullptr;
+  hraw1Pedestal_time = nullptr;
+  hraw1CDS_time = nullptr;
+  hraw1Signal_time = nullptr;
 
   //------------------------------------------------------------------------------
   //--- efficiency
   // MG 2010/06/04
   //------------------------------------------------------------------------------
 
-  effimap = NULL;
-  effi_vs_TrkHitDist = NULL;
-  effiCorr_vs_TrkHitDist = NULL;
-  goodtracks = NULL;
-  TrkInMimo = NULL;
-  effinpixel = NULL;
-  HitInPixel = NULL;
-  TrkInPixel = NULL;
+  effimap = nullptr;
+  effi_vs_TrkHitDist = nullptr;
+  effiCorr_vs_TrkHitDist = nullptr;
+  goodtracks = nullptr;
+  TrkInMimo = nullptr;
+  effinpixel = nullptr;
+  HitInPixel = nullptr;
+  TrkInPixel = nullptr;
 
   //------------------------------------------------------------------------------
   //--- hit position
   //------------------------------------------------------------------------------
 
-  cHitMap = NULL;
-  cHitMap2 = NULL;
-  cPixEvent = NULL;
-  cPosStudy1 = NULL;
-  cPosStudy2 = NULL;
-  cPosStudy_TrackhitPos_vs_Mult = NULL;
-  cPosStudy_TrackhitPos_vs_Mult2 = NULL;
+  cHitMap = nullptr;
+  cHitMap2 = nullptr;
+  cPixEvent = nullptr;
+  cPosStudy1 = nullptr;
+  cPosStudy2 = nullptr;
+  cPosStudy_TrackhitPos_vs_Mult = nullptr;
+  cPosStudy_TrackhitPos_vs_Mult2 = nullptr;
 
   //------------------------------------------------------------------------------
   //--- ?
   //------------------------------------------------------------------------------
 
-  hseedQvsS2NAll = NULL;
-  hseedQvsS2NGood = NULL;
-  hQseedAll = NULL;
-  hIndex2x2 = NULL;
-  hnhit = NULL;
-  vec = NULL;
-  tudv = NULL;
-  tvdu = NULL;
-  hudv = NULL;
-  hvdu = NULL;
-  tuhu1 = NULL;
-  tvhv1 = NULL;
-  tuhu = NULL;
-  tvhv = NULL;
-  tuhv = NULL;
-  tvhu = NULL;
+  hseedQvsS2NAll = nullptr;
+  hseedQvsS2NGood = nullptr;
+  hQseedAll = nullptr;
+  hIndex2x2 = nullptr;
+  hnhit = nullptr;
+  vec = nullptr;
+  tudv = nullptr;
+  tvdu = nullptr;
+  hudv = nullptr;
+  hvdu = nullptr;
+  tuhu1 = nullptr;
+  tvhv1 = nullptr;
+  tuhu = nullptr;
+  tvhv = nullptr;
+  tuhv = nullptr;
+  tvhu = nullptr;
 
-  hAllHvvsAllTv = NULL;
-  hAllHuvsAllTv = NULL;
-  hAllHvvsAllTu = NULL;
-  hAllHuvsAllTu = NULL;
+  hAllHvvsAllTv = nullptr;
+  hAllHuvsAllTv = nullptr;
+  hAllHvvsAllTu = nullptr;
+  hAllHuvsAllTu = nullptr;
 
-  huCG5tu = NULL;
-  hvCG5tv = NULL;
-  huCGtu = NULL;
-  hvCGtv = NULL;
-  huCGtuInPix = NULL;
-  hvCGtvInPix = NULL;
-  huCGtuInPix5 = NULL;
-  hvCGtvInPix5 = NULL;
-  htuvInPix = NULL;
-  ProfUCG = NULL;
-  ProfVCG = NULL;
-  ProfACGn = NULL;
-  hUeta3TuInPix = NULL;
-  hVeta3TvInPix = NULL;
-  hUcorTuInPix = NULL;
-  hVcorTvInPix = NULL;
-  huCGtuInPix4 = NULL;
-  huCG2x2tuInPix = NULL;
-  hvCG2x2tvInPix = NULL;
-  hEta2x2tu1L = NULL;
-  hEta2x2tv1L = NULL;
-  hEta2x2tu2L = NULL;
-  hEta2x2tv2L = NULL;
-  hCG2x2tu1L = NULL;
-  hCG2x2tv1L = NULL;
+  huCG5tu = nullptr;
+  hvCG5tv = nullptr;
+  huCGtu = nullptr;
+  hvCGtv = nullptr;
+  huCGtuInPix = nullptr;
+  hvCGtvInPix = nullptr;
+  huCGtuInPix5 = nullptr;
+  hvCGtvInPix5 = nullptr;
+  htuvInPix = nullptr;
+  ProfUCG = nullptr;
+  ProfVCG = nullptr;
+  ProfACGn = nullptr;
+  hUeta3TuInPix = nullptr;
+  hVeta3TvInPix = nullptr;
+  hUcorTuInPix = nullptr;
+  hVcorTvInPix = nullptr;
+  huCGtuInPix4 = nullptr;
+  huCG2x2tuInPix = nullptr;
+  hvCG2x2tvInPix = nullptr;
+  hEta2x2tu1L = nullptr;
+  hEta2x2tv1L = nullptr;
+  hEta2x2tu2L = nullptr;
+  hEta2x2tv2L = nullptr;
+  hCG2x2tu1L = nullptr;
+  hCG2x2tv1L = nullptr;
 
-  hEta2x2 = NULL;
-  hEta2x2U = NULL;
-  hEta2x2V = NULL;
-  hEta2x2m = NULL;
+  hEta2x2 = nullptr;
+  hEta2x2U = nullptr;
+  hEta2x2V = nullptr;
+  hEta2x2m = nullptr;
 
-  hEta2x2UL = NULL;
-  hEta2x2VL = NULL;
+  hEta2x2UL = nullptr;
+  hEta2x2VL = nullptr;
 
-  hdCGEtaU = NULL;
-  hdCGEtaV = NULL;
-  hdCGDigU = NULL;
-  hdCGDigV = NULL;
-  hdCGDigUV = NULL;
-  htmp5 = NULL;
-  hEta2x2tu2 = NULL;
-  hEta2x2tv2 = NULL;
-  hTHCorr2 = NULL;
-  hDifCorU = NULL;
-  hDifCorV = NULL;
-  hAllHuvsAllTu2 = NULL;
-  hAllHvvsAllTv2 = NULL;
-  hAlignHuTu = NULL;
-  hAlignHvTv = NULL;
-  hAlignHuTuvsTv = NULL;
-  hAlignHvTvvsTu = NULL;
-  hAlignHuTuvsTu = NULL;
-  hAlignHvTvvsTv = NULL;
-  hAlignHuTuvsHv = NULL;
-  hAlignHvTvvsHu = NULL;
-  hAllHvvsAllTv3 = NULL;
-  h2dallhits = NULL;
-  h2dgoodhits = NULL;
-  h2dmatchedhits = NULL;
-  h2DpictureMatched = NULL;
-  hEta2x2vsInd = NULL;
-  hChargeVsPosition = NULL;
-  hChargeVsDistance = NULL;
-  hNorm = NULL;
-  hAllHitsInPixel = NULL;
-  h1RmsOnTheta = NULL;
-  h2RmsOnThetaScanVsThetaCut = NULL;
-  h1ProjectionOnX = NULL;
-  h1ProjectionOnY = NULL;
-  h1NumberOfHitsMult = NULL;
+  hdCGEtaU = nullptr;
+  hdCGEtaV = nullptr;
+  hdCGDigU = nullptr;
+  hdCGDigV = nullptr;
+  hdCGDigUV = nullptr;
+  htmp5 = nullptr;
+  hEta2x2tu2 = nullptr;
+  hEta2x2tv2 = nullptr;
+  hTHCorr2 = nullptr;
+  hDifCorU = nullptr;
+  hDifCorV = nullptr;
+  hAllHuvsAllTu2 = nullptr;
+  hAllHvvsAllTv2 = nullptr;
+  hAlignHuTu = nullptr;
+  hAlignHvTv = nullptr;
+  hAlignHuTuvsTv = nullptr;
+  hAlignHvTvvsTu = nullptr;
+  hAlignHuTuvsTu = nullptr;
+  hAlignHvTvvsTv = nullptr;
+  hAlignHuTuvsHv = nullptr;
+  hAlignHvTvvsHu = nullptr;
+  hAllHvvsAllTv3 = nullptr;
+  h2dallhits = nullptr;
+  h2dgoodhits = nullptr;
+  h2dmatchedhits = nullptr;
+  h2DpictureMatched = nullptr;
+  hEta2x2vsInd = nullptr;
+  hChargeVsPosition = nullptr;
+  hChargeVsDistance = nullptr;
+  hNorm = nullptr;
+  hAllHitsInPixel = nullptr;
+  h1RmsOnTheta = nullptr;
+  h2RmsOnThetaScanVsThetaCut = nullptr;
+  h1ProjectionOnX = nullptr;
+  h1ProjectionOnY = nullptr;
+  h1NumberOfHitsMult = nullptr;
   for (int i = 0; i < 4; i++)
   {
-    h1ProjectionOnXMult[i] = NULL;
-    h1ProjectionOnYMult[i] = NULL;
-    h2GoodHitsMult[i] = NULL;
+    h1ProjectionOnXMult[i] = nullptr;
+    h1ProjectionOnYMult[i] = nullptr;
+    h2GoodHitsMult[i] = nullptr;
   }
-  h1Sigma = NULL;
+  h1Sigma = nullptr;
   for (int i = 0; i < 6; i++)
   {
-    hdCGDigUVMult[i] = NULL;
+    hdCGDigUVMult[i] = nullptr;
   }
-  h1SigmaSlices = NULL;
-  h1SigmaSlices_Pull = NULL;
-  h2DXprimeVsYprime = NULL;
+  h1SigmaSlices = nullptr;
+  h1SigmaSlices_Pull = nullptr;
+  h2DXprimeVsYprime = nullptr;
 
-  huv = NULL;
-  huv_rate = NULL;       // AP 2014/09/25
-  h_pixels_event = NULL; // AP 2014/10/07
-  hxy = NULL;
-  huvBad = NULL;
-  hxyBad = NULL;
-  tuv = NULL;
-  tuv1 = NULL;
+  huv = nullptr;
+  huv_rate = nullptr;       // AP 2014/09/25
+  h_pixels_event = nullptr; // AP 2014/10/07
+  hxy = nullptr;
+  huvBad = nullptr;
+  hxyBad = nullptr;
+  tuv = nullptr;
+  tuv1 = nullptr;
 
-  hhu = NULL;
-  hhv = NULL;
-  hhx = NULL;
-  hhy = NULL;
-  hhuS = NULL;
-  hhvS = NULL;
-  htu = NULL;
-  htv = NULL;
+  hhu = nullptr;
+  hhv = nullptr;
+  hhx = nullptr;
+  hhy = nullptr;
+  hhuS = nullptr;
+  hhvS = nullptr;
+  htu = nullptr;
+  htv = nullptr;
   //---ab
-  htuhtv = NULL;
-  hGOODqcel = NULL;
+  htuhtv = nullptr;
+  hGOODqcel = nullptr;
 
-  hgoodSeedPixel = NULL;
-  h2DgoodSeedPixel = NULL;
-  hSeedBetweenDist = NULL;
-  hEta3DigU = NULL;
-  hEta3DigV = NULL;
-  hqc_nc = NULL;
+  hgoodSeedPixel = nullptr;
+  h2DgoodSeedPixel = nullptr;
+  hSeedBetweenDist = nullptr;
+  hEta3DigU = nullptr;
+  hEta3DigV = nullptr;
+  hqc_nc = nullptr;
 
-  hnpix = NULL;
-  hnpix_nc = NULL;
+  hnpix = nullptr;
+  hnpix_nc = nullptr;
 
-  FalseHitMap = NULL;
-  hClusterChargeProfile = NULL;
-  hClusterChargeNorm = NULL;
+  FalseHitMap = nullptr;
+  hClusterChargeProfile = nullptr;
+  hClusterChargeNorm = nullptr;
   for (int i = 0; i < 2; i++)
   {
-    etal[i] = NULL;
-    etal1[i] = NULL;
+    etal[i] = nullptr;
+    etal1[i] = nullptr;
   }
   for (int i = 0; i < 2; i++)
   {
-    vecu[i] = NULL;
-    vecv[i] = NULL;
+    vecu[i] = nullptr;
+    vecv[i] = nullptr;
   }
   for (int i = 0; i < 64; i++)
-    hChargeInSeedInGroup[i] = NULL;
-  DuvCG = NULL;
-  duvall = NULL;
+    hChargeInSeedInGroup[i] = nullptr;
+  DuvCG = nullptr;
+  duvall = nullptr;
 
-  hCDSvar = NULL;
-  CDSVarvsTime = NULL;
-  dtime = NULL;
+  hCDSvar = nullptr;
+  CDSVarvsTime = nullptr;
+  dtime = nullptr;
 
   //------------------------------------------------------------------------------
   //----- Spatial Resolution
   //------------------------------------------------------------------------------
-  hAllHuvsAllTu1 = NULL;
-  hAllHvvsAllTv1 = NULL;
-  huCGtu1 = NULL;
-  hvCGtv1 = NULL;
-  huCGtu1_vs_Mult = NULL;
-  hvCGtv1_vs_Mult = NULL;
-  huvCGtuv = NULL;
-  huvCGtuv_NoAsso = NULL;
-  hDist_Trck_Diode_Asso = NULL;
-  hDist_Trck_Diode_NoAsso = NULL;
-  hEffic_vs_Dist_Trck_Diode = NULL;
-  hDist_Trck_Diode_Asso_vs_Mult = NULL;
-  hnpixc_vs_TrkDistToDiode = NULL;
+  hAllHuvsAllTu1 = nullptr;
+  hAllHvvsAllTv1 = nullptr;
+  huCGtu1 = nullptr;
+  hvCGtv1 = nullptr;
+  huCGtu1_vs_Mult = nullptr;
+  hvCGtv1_vs_Mult = nullptr;
+  huvCGtuv = nullptr;
+  huvCGtuv_NoAsso = nullptr;
+  hDist_Trck_Diode_Asso = nullptr;
+  hDist_Trck_Diode_NoAsso = nullptr;
+  hEffic_vs_Dist_Trck_Diode = nullptr;
+  hDist_Trck_Diode_Asso_vs_Mult = nullptr;
+  hnpixc_vs_TrkDistToDiode = nullptr;
 
-  huCGwidth_vs_Mult = NULL;
-  hvCGwidth_vs_Mult = NULL;
-  huCGmean_vs_Mult = NULL;
-  hvCGmean_vs_Mult = NULL;
-  huCGtu1_vs_TracksPerEvent = NULL;
-  hvCGtv1_vs_TracksPerEvent = NULL;
-  grvCGVsMult = NULL;
-  huCGtu2 = NULL;
-  hvCGtv2 = NULL;
-  hCG2x2tu1 = NULL;
-  hCG2x2tv1 = NULL;
-  hCG5URes = NULL;
-  hCG5VRes = NULL;
-  hTuHuCorr = NULL;
-  hTvHvCorr = NULL;
-  hEta2x2tu1 = NULL;
-  hEta2x2tv1 = NULL;
-  hEtaURes = NULL;
-  hEtaVRes = NULL;
-  hEta3URes = NULL;
-  hEta3VRes = NULL;
-  hEtaU_2x2Res = NULL;
-  hEtaV_2x2Res = NULL;
-  hEtaU_5x5Res = NULL;
-  hEtaV_5x5Res = NULL;
-  hAHTURes = NULL;
-  hAHTVRes = NULL;
+  huCGwidth_vs_Mult = nullptr;
+  hvCGwidth_vs_Mult = nullptr;
+  huCGmean_vs_Mult = nullptr;
+  hvCGmean_vs_Mult = nullptr;
+  huCGtu1_vs_TracksPerEvent = nullptr;
+  hvCGtv1_vs_TracksPerEvent = nullptr;
+  grvCGVsMult = nullptr;
+  huCGtu2 = nullptr;
+  hvCGtv2 = nullptr;
+  hCG2x2tu1 = nullptr;
+  hCG2x2tv1 = nullptr;
+  hCG5URes = nullptr;
+  hCG5VRes = nullptr;
+  hTuHuCorr = nullptr;
+  hTvHvCorr = nullptr;
+  hEta2x2tu1 = nullptr;
+  hEta2x2tv1 = nullptr;
+  hEtaURes = nullptr;
+  hEtaVRes = nullptr;
+  hEta3URes = nullptr;
+  hEta3VRes = nullptr;
+  hEtaU_2x2Res = nullptr;
+  hEtaV_2x2Res = nullptr;
+  hEtaU_5x5Res = nullptr;
+  hEtaV_5x5Res = nullptr;
+  hAHTURes = nullptr;
+  hAHTVRes = nullptr;
 
-  cres = NULL;
-  cresfit_CGWidth_vs_Mult = NULL;
-  cresfit_CGMean_vs_Mult = NULL;
-  leg_CGWidth_vs_Mult = NULL;
-  cresfit_CGWidth_vs_TracksPerEvent = NULL;
+  cres = nullptr;
+  cresfit_CGWidth_vs_Mult = nullptr;
+  cresfit_CGMean_vs_Mult = nullptr;
+  leg_CGWidth_vs_Mult = nullptr;
+  cresfit_CGWidth_vs_TracksPerEvent = nullptr;
 
   //------------------------------------------------------------------------------
   // Fake rate study
   //------------------------------------------------------------------------------
-  hNhitperpixel = NULL;
-  hNhitRateperpixel = NULL;
-  hPixelsPerFakeRate = NULL;
+  hNhitperpixel = nullptr;
+  hNhitRateperpixel = nullptr;
+  hPixelsPerFakeRate = nullptr;
 
-  cfake = NULL;
+  cfake = nullptr;
 
   //------------------------------------------------------------------------------
   // tracks properties and chi2
   //------------------------------------------------------------------------------
 
-  hNTracksPerEvent = NULL;
-  hNTracksPerEventievt = NULL;
-  hNGoodGeomTracksPerEvent = NULL;
+  hNTracksPerEvent = nullptr;
+  hNTracksPerEventievt = nullptr;
+  hNGoodGeomTracksPerEvent = nullptr;
 
-  hAllTvTu = NULL;
-  hAllTu = NULL;
-  hAllTv = NULL;
-  hGoodChi2TvTu = NULL;
-  hGoodChi2Tu = NULL;
-  hGoodChi2Tv = NULL;
-  hGoodChi2Tx = NULL;
-  hGoodChi2Ty = NULL;
-  hGoodChi2AngleXZ = NULL;
-  hGoodChi2AngleYZ = NULL;
+  hAllTvTu = nullptr;
+  hAllTu = nullptr;
+  hAllTv = nullptr;
+  hGoodChi2TvTu = nullptr;
+  hGoodChi2Tu = nullptr;
+  hGoodChi2Tv = nullptr;
+  hGoodChi2Tx = nullptr;
+  hGoodChi2Ty = nullptr;
+  hGoodChi2AngleXZ = nullptr;
+  hGoodChi2AngleYZ = nullptr;
 
-  hchi2_c = NULL;
-  hchi2_nc = NULL;
-  hchi2 = NULL;
+  hchi2_c = nullptr;
+  hchi2_nc = nullptr;
+  hchi2 = nullptr;
 
-  hTrackToClusterMinDistance = NULL;
-  hTrackTo2ndclosestClusterDistance = NULL;
-  hWrongAssociationProba = NULL;
-  hMinDistance_vs_2ndDistance = NULL;
+  hTrackToClusterMinDistance = nullptr;
+  hTrackTo2ndclosestClusterDistance = nullptr;
+  hWrongAssociationProba = nullptr;
+  hMinDistance_vs_2ndDistance = nullptr;
 
-  hNhitsPerTrack_all = NULL;
-  hNhitsPerTrack_good = NULL;
-  hNhitsPerTrack_matched = NULL;
+  hNhitsPerTrack_all = nullptr;
+  hNhitsPerTrack_good = nullptr;
+  hNhitsPerTrack_matched = nullptr;
 
   static const int NRefPlane = 10;
   for (int i = 0; i < NRefPlane; i++)
   {
-    hRef_Tud_vs_Tv[i] = NULL;
-    hRef_Tud_vs_Tu[i] = NULL;
-    hRef_Tud_vs_TDOX[i] = NULL;
-    hRef_Tud_vs_TDOY[i] = NULL;
-    hRef_Tud_vs_Chi2[i] = NULL;
-    hRef_Tud_vs_Tu1[i] = NULL;
-    hRef_Tud_vs_Tk1[i] = NULL;
+    hRef_Tud_vs_Tv[i] = nullptr;
+    hRef_Tud_vs_Tu[i] = nullptr;
+    hRef_Tud_vs_TDOX[i] = nullptr;
+    hRef_Tud_vs_TDOY[i] = nullptr;
+    hRef_Tud_vs_Chi2[i] = nullptr;
+    hRef_Tud_vs_Tu1[i] = nullptr;
+    hRef_Tud_vs_Tk1[i] = nullptr;
   }
 
   // Char_t titreref[100] ;
@@ -607,410 +607,410 @@ MimosaAnalysis::MimosaAnalysis()
   //------------------------------------------------------------------------------
   // Good/All hits.
   //------------------------------------------------------------------------------
-  hnhitievt = NULL;
-  hnahitievt = NULL;
-  hnGOODhit = NULL;
-  hnGOODhitwhentrack = NULL;
-  hnTracksinSensorPerEvent = NULL;
-  hTrackDensity = NULL;
-  hnTracksInGeomatrixVsTrackPerEvent = NULL;
-  hnGOODhitInGeomatrixVsTrackPerEvent = NULL;
-  hEfficiencyInGeomatrixVsTrackPerEvent = NULL;
-  hResidueUInGeomatrixVsTrackPerEvent = NULL;
-  hResidueVInGeomatrixVsTrackPerEvent = NULL;
-  leg_TracksinSensorPerEvent = NULL;
-  l_average_Effic = NULL;
-  l_average_Effic_PErr = NULL;
-  l_average_Effic_MErr = NULL;
+  hnhitievt = nullptr;
+  hnahitievt = nullptr;
+  hnGOODhit = nullptr;
+  hnGOODhitwhentrack = nullptr;
+  hnTracksinSensorPerEvent = nullptr;
+  hTrackDensity = nullptr;
+  hnTracksInGeomatrixVsTrackPerEvent = nullptr;
+  hnGOODhitInGeomatrixVsTrackPerEvent = nullptr;
+  hEfficiencyInGeomatrixVsTrackPerEvent = nullptr;
+  hResidueUInGeomatrixVsTrackPerEvent = nullptr;
+  hResidueVInGeomatrixVsTrackPerEvent = nullptr;
+  leg_TracksinSensorPerEvent = nullptr;
+  l_average_Effic = nullptr;
+  l_average_Effic_PErr = nullptr;
+  l_average_Effic_MErr = nullptr;
 
-  hAllS2N = NULL;
-  hallhitSN = NULL;
-  hallSNneighbour = NULL;
-  hgoodSNneighbour = NULL;
-  hgoodSN_vs_SNN = NULL;
-  hallSN_vs_SNN = NULL;
+  hAllS2N = nullptr;
+  hallhitSN = nullptr;
+  hallSNneighbour = nullptr;
+  hgoodSNneighbour = nullptr;
+  hgoodSN_vs_SNN = nullptr;
+  hallSN_vs_SNN = nullptr;
 
-  hallSN_minus_hgoodSN_vs_SNN = NULL;
-  hdistchi2 = NULL;
+  hallSN_minus_hgoodSN_vs_SNN = nullptr;
+  hdistchi2 = nullptr;
 
   //------------------------------------------------------------------------------
   // REAL S/N NEIGHBOURS ----ab25072005
   //------------------------------------------------------------------------------
 
-  hSN_vs_SNNReal = NULL;
+  hSN_vs_SNNReal = nullptr;
 
   //------------------------------------------------------------------------------
   // Charge by ordered pixels Histos.
   //------------------------------------------------------------------------------
   //-------------
-  hGOODChargeOrder1 = NULL;
-  hGOODChargeOrder2 = NULL;
-  hGOODChargeOrder3 = NULL;
-  hGOODChargeOrder4 = NULL;
-  hGOODChargeOrder5 = NULL;
-  hGOODChargeOrder6 = NULL;
-  hGOODChargeOrder7 = NULL;
-  hGOODChargeOrder8 = NULL;
-  hGOODChargeOrder9 = NULL;
-  hGOODChargeCor_1_2 = NULL;
-  hGOODChargeCor_1_3 = NULL;
-  hGOODChargeCor_1_4 = NULL;
-  hGOODChargeCor_2_3 = NULL;
-  hGOODChargeSum_4 = NULL;
-  hGOODChargeRap_1_over_2 = NULL;
-  hGOODChargeRap_1_over_3 = NULL;
-  hGOODChargeRap_1_over_4 = NULL;
-  hGOODChargeRap_2_over_3 = NULL;
+  hGOODChargeOrder1 = nullptr;
+  hGOODChargeOrder2 = nullptr;
+  hGOODChargeOrder3 = nullptr;
+  hGOODChargeOrder4 = nullptr;
+  hGOODChargeOrder5 = nullptr;
+  hGOODChargeOrder6 = nullptr;
+  hGOODChargeOrder7 = nullptr;
+  hGOODChargeOrder8 = nullptr;
+  hGOODChargeOrder9 = nullptr;
+  hGOODChargeCor_1_2 = nullptr;
+  hGOODChargeCor_1_3 = nullptr;
+  hGOODChargeCor_1_4 = nullptr;
+  hGOODChargeCor_2_3 = nullptr;
+  hGOODChargeSum_4 = nullptr;
+  hGOODChargeRap_1_over_2 = nullptr;
+  hGOODChargeRap_1_over_3 = nullptr;
+  hGOODChargeRap_1_over_4 = nullptr;
+  hGOODChargeRap_2_over_3 = nullptr;
 
   //------------------------------------------------------------------------------
   //----- ?
   //------------------------------------------------------------------------------
 
   // histograms needed for charge distribution function:
-  hS2N2All = NULL;
-  hS2N2nd = NULL;
-  hS2N2RH = NULL;
-  hPedestal = NULL;
+  hS2N2All = nullptr;
+  hS2N2nd = nullptr;
+  hS2N2RH = nullptr;
+  hPedestal = nullptr;
 
   //----ALL HITS: Signal / noise seed vs Signal / noise in the pixel range [i-j]
   for (int i = 0; i < jpixmax; i++)
   {
-    hsnALL_seed_vs_pix_0[i] = NULL;
-    hsnALL_seed_vs_pix_1[i] = NULL;
+    hsnALL_seed_vs_pix_0[i] = nullptr;
+    hsnALL_seed_vs_pix_1[i] = nullptr;
   }
-  hChargeIntegral1 = NULL;
-  hChargeNorm1 = NULL;
-  hChargeIntegral2 = NULL;
-  hChargeNorm2 = NULL;
-  hChargeIntegral3 = NULL;
-  hChargeNorm3 = NULL;
-  hChargeIntegral4 = NULL;
-  hChargeNorm4 = NULL;
-  hChargeIntegral = NULL;
-  hChargeIntSmoothed = NULL;
+  hChargeIntegral1 = nullptr;
+  hChargeNorm1 = nullptr;
+  hChargeIntegral2 = nullptr;
+  hChargeNorm2 = nullptr;
+  hChargeIntegral3 = nullptr;
+  hChargeNorm3 = nullptr;
+  hChargeIntegral4 = nullptr;
+  hChargeNorm4 = nullptr;
+  hChargeIntegral = nullptr;
+  hChargeIntSmoothed = nullptr;
 
   //------------------------------------------------------------------------------
   // Check pixel homogeneity depending on real track position
   //------------------------------------------------------------------------------
-  hHOM_tu_tv_modulo = NULL;
-  hHOM_ResU_tu = NULL;
-  hHOM_ResV_tv = NULL;
-  ProfHOM_ResU_tu = NULL;
-  ProfHOM_ResV_tv = NULL;
+  hHOM_tu_tv_modulo = nullptr;
+  hHOM_ResU_tu = nullptr;
+  hHOM_ResV_tv = nullptr;
+  ProfHOM_ResU_tu = nullptr;
+  ProfHOM_ResV_tv = nullptr;
 
-  hHOM_modUCG_modtu = NULL;
-  hHOM_modVCG_modtv = NULL;
-  hHOM_modUeta3_modtu = NULL;
-  hHOM_modVeta3_modtv = NULL;
-  hHOM_modUeta3_realtu = NULL;
-  hHOM_modVeta3_realtv = NULL;
-  hHOM_modUCG_realtu = NULL;
-  hHOM_modVCG_realtv = NULL;
-  hHOM_modUeta3_Eta3U = NULL;
-  hHOM_modVeta3_Eta3V = NULL;
-  hHOM_modUeta3_modVeta3 = NULL;
-  hHOM_modUCG_modVCG = NULL;
-  hHOM_modUeta3_modUCG = NULL;
-  hHOM_modVeta3_modVCG = NULL;
+  hHOM_modUCG_modtu = nullptr;
+  hHOM_modVCG_modtv = nullptr;
+  hHOM_modUeta3_modtu = nullptr;
+  hHOM_modVeta3_modtv = nullptr;
+  hHOM_modUeta3_realtu = nullptr;
+  hHOM_modVeta3_realtv = nullptr;
+  hHOM_modUCG_realtu = nullptr;
+  hHOM_modVCG_realtv = nullptr;
+  hHOM_modUeta3_Eta3U = nullptr;
+  hHOM_modVeta3_Eta3V = nullptr;
+  hHOM_modUeta3_modVeta3 = nullptr;
+  hHOM_modUCG_modVCG = nullptr;
+  hHOM_modUeta3_modUCG = nullptr;
+  hHOM_modVeta3_modVCG = nullptr;
 
-  hHOM_Charge_diodedist_alg = NULL;
-  hHOM_Charge_diodedist_alg_u = NULL; // clm
-  hHOM_Charge_diodedist_alg_v = NULL; // clm
-  hHOM_Charge_diodedist = NULL;
-  hHOM_Charge2_diodedist = NULL;
-  hHOM_Charge4_diodedist = NULL;
-  hHOM_Charge9_diodedist = NULL;
-  hHOM_Charge25_diodedist = NULL;
-  hHOM_Noise_diodedist = NULL;
+  hHOM_Charge_diodedist_alg = nullptr;
+  hHOM_Charge_diodedist_alg_u = nullptr; // clm
+  hHOM_Charge_diodedist_alg_v = nullptr; // clm
+  hHOM_Charge_diodedist = nullptr;
+  hHOM_Charge2_diodedist = nullptr;
+  hHOM_Charge4_diodedist = nullptr;
+  hHOM_Charge9_diodedist = nullptr;
+  hHOM_Charge25_diodedist = nullptr;
+  hHOM_Noise_diodedist = nullptr;
 
   // start CLM 2013/01/23
-  ProfhGOODCharge_Charge_DiodePosition = NULL;
-  ProfhGOODCharge_Charge_DiodePositionSeedQLT300 = NULL;
-  ProfhGOODCharge_Charge_DiodePositionSeedQGT2000 = NULL;
+  ProfhGOODCharge_Charge_DiodePosition = nullptr;
+  ProfhGOODCharge_Charge_DiodePositionSeedQLT300 = nullptr;
+  ProfhGOODCharge_Charge_DiodePositionSeedQGT2000 = nullptr;
   // clm
-  ProfhGOODCharge_Charge_DiodePosition_evencol_evenrow = NULL;
-  ProfhGOODCharge_Charge_DiodePosition_evencol_oddrow = NULL;
-  ProfhGOODCharge_Charge_DiodePosition_oddcol_evenrow = NULL;
-  ProfhGOODCharge_Charge_DiodePosition_oddcol_oddrow = NULL;
+  ProfhGOODCharge_Charge_DiodePosition_evencol_evenrow = nullptr;
+  ProfhGOODCharge_Charge_DiodePosition_evencol_oddrow = nullptr;
+  ProfhGOODCharge_Charge_DiodePosition_oddcol_evenrow = nullptr;
+  ProfhGOODCharge_Charge_DiodePosition_oddcol_oddrow = nullptr;
   // clm
-  ProfhGOODCharge_Charge_DiodePosition_evencol_evenrow_seed = NULL;
-  ProfhGOODCharge_Charge_DiodePosition_evencol_oddrow_seed = NULL;
-  ProfhGOODCharge_Charge_DiodePosition_oddcol_evenrow_seed = NULL;
-  ProfhGOODCharge_Charge_DiodePosition_oddcol_oddrow_seed = NULL;
+  ProfhGOODCharge_Charge_DiodePosition_evencol_evenrow_seed = nullptr;
+  ProfhGOODCharge_Charge_DiodePosition_evencol_oddrow_seed = nullptr;
+  ProfhGOODCharge_Charge_DiodePosition_oddcol_evenrow_seed = nullptr;
+  ProfhGOODCharge_Charge_DiodePosition_oddcol_oddrow_seed = nullptr;
   // clm
-  ProfhGOODCharge_Charge_DiodePosition_evencol_evenrow_1stcrown = NULL;
-  ProfhGOODCharge_Charge_DiodePosition_evencol_oddrow_1stcrown = NULL;
-  ProfhGOODCharge_Charge_DiodePosition_oddcol_evenrow_1stcrown = NULL;
-  ProfhGOODCharge_Charge_DiodePosition_oddcol_oddrow_1stcrown = NULL;
+  ProfhGOODCharge_Charge_DiodePosition_evencol_evenrow_1stcrown = nullptr;
+  ProfhGOODCharge_Charge_DiodePosition_evencol_oddrow_1stcrown = nullptr;
+  ProfhGOODCharge_Charge_DiodePosition_oddcol_evenrow_1stcrown = nullptr;
+  ProfhGOODCharge_Charge_DiodePosition_oddcol_oddrow_1stcrown = nullptr;
   // clm
-  ProfhGOODCharge_Charge_DiodePosition_evencol_evenrow_2ndcrown = NULL;
-  ProfhGOODCharge_Charge_DiodePosition_evencol_oddrow_2ndcrown = NULL;
-  ProfhGOODCharge_Charge_DiodePosition_oddcol_evenrow_2ndcrown = NULL;
-  ProfhGOODCharge_Charge_DiodePosition_oddcol_oddrow_2ndcrown = NULL;
+  ProfhGOODCharge_Charge_DiodePosition_evencol_evenrow_2ndcrown = nullptr;
+  ProfhGOODCharge_Charge_DiodePosition_evencol_oddrow_2ndcrown = nullptr;
+  ProfhGOODCharge_Charge_DiodePosition_oddcol_evenrow_2ndcrown = nullptr;
+  ProfhGOODCharge_Charge_DiodePosition_oddcol_oddrow_2ndcrown = nullptr;
 
-  hDistVSeedOtherOldCalc = NULL;
-  hDistVSeedOtherNewCalc = NULL;
+  hDistVSeedOtherOldCalc = nullptr;
+  hDistVSeedOtherNewCalc = nullptr;
 
-  h2dCharge_Charge_DiodePosition_Track = NULL;
-  h2dCharge_Charge_DiodePosition_CluSize = NULL;
+  h2dCharge_Charge_DiodePosition_Track = nullptr;
+  h2dCharge_Charge_DiodePosition_CluSize = nullptr;
 
-  hNpixInClu = NULL;
-  hQpixInClu = NULL;
+  hNpixInClu = nullptr;
+  hQpixInClu = nullptr;
 
-  ProfhGOODCharge_Charge_DiodePositionSimpDist = NULL;
+  ProfhGOODCharge_Charge_DiodePositionSimpDist = nullptr;
 
-  hHOM_Charge_diodedist3D = NULL;
-  hHOM_Charge2_diodedist3D = NULL;
-  hHOM_Charge4_diodedist3D = NULL;
-  hHOM_Charge9_diodedist3D = NULL;
-  hHOM_Charge25_diodedist3D = NULL;
+  hHOM_Charge_diodedist3D = nullptr;
+  hHOM_Charge2_diodedist3D = nullptr;
+  hHOM_Charge4_diodedist3D = nullptr;
+  hHOM_Charge9_diodedist3D = nullptr;
+  hHOM_Charge25_diodedist3D = nullptr;
   // end CLM 2013/01/23
 
-  // TProfile *ProfHOM_Charge_diodedist_alg = NULL;  // JB 2010/03/11
-  // TProfile *ProfHOM_Charge_diodedist_alg_v = NULL;  //clm 2013/01/23
-  // TProfile *ProfHOM_Charge_diodedist_alg_u = NULL;  //clm 2013/01/23
-  // TProfile *ProfHOM_Charge_diodedist = NULL;
-  // TProfile *ProfHOM_Charge2_diodedist = NULL;
-  // TProfile *ProfHOM_Charge4_diodedist = NULL;
-  // TProfile *ProfHOM_Charge9_diodedist = NULL;
-  // TProfile *ProfHOM_Charge25_diodedist = NULL;
+  // TProfile *ProfHOM_Charge_diodedist_alg = nullptr;  // JB 2010/03/11
+  // TProfile *ProfHOM_Charge_diodedist_alg_v = nullptr;  //clm 2013/01/23
+  // TProfile *ProfHOM_Charge_diodedist_alg_u = nullptr;  //clm 2013/01/23
+  // TProfile *ProfHOM_Charge_diodedist = nullptr;
+  // TProfile *ProfHOM_Charge2_diodedist = nullptr;
+  // TProfile *ProfHOM_Charge4_diodedist = nullptr;
+  // TProfile *ProfHOM_Charge9_diodedist = nullptr;
+  // TProfile *ProfHOM_Charge25_diodedist = nullptr;
 
-  hHOM_SNseed_diodedist = NULL;
-  // TProfile *ProfHOM_SNseed_diodedist = NULL;
+  hHOM_SNseed_diodedist = nullptr;
+  // TProfile *ProfHOM_SNseed_diodedist = nullptr;
 
-  hHOM_Charge_diodedist_00_10 = NULL;
-  hHOM_Charge_diodedist_10_20 = NULL;
-  hHOM_Charge_diodedist_20_30 = NULL;
-  hHOM_Charge_diodedist_30_40 = NULL;
-  hHOM_Charge_diodedist_40_50 = NULL;
-  hHOM_Charge_diodedist_50_60 = NULL;
-  hHOM_Charge_diodedist_60_70 = NULL;
-  hHOM_Charge_diodedist_70_80 = NULL;
-  hHOM_Charge_diodedist_80_90 = NULL;
-  hHOM_Charge_diodedist_90_inf = NULL;
+  hHOM_Charge_diodedist_00_10 = nullptr;
+  hHOM_Charge_diodedist_10_20 = nullptr;
+  hHOM_Charge_diodedist_20_30 = nullptr;
+  hHOM_Charge_diodedist_30_40 = nullptr;
+  hHOM_Charge_diodedist_40_50 = nullptr;
+  hHOM_Charge_diodedist_50_60 = nullptr;
+  hHOM_Charge_diodedist_60_70 = nullptr;
+  hHOM_Charge_diodedist_70_80 = nullptr;
+  hHOM_Charge_diodedist_80_90 = nullptr;
+  hHOM_Charge_diodedist_90_inf = nullptr;
 
-  hHOM_DU_Nevent = NULL;
-  hHOM_DV_Nevent = NULL;
-  hHOM_modtu_Nevent = NULL;
-  hHOM_modtv_Nevent = NULL;
+  hHOM_DU_Nevent = nullptr;
+  hHOM_DV_Nevent = nullptr;
+  hHOM_modtu_Nevent = nullptr;
+  hHOM_modtv_Nevent = nullptr;
 
-  hHOM_modUCG_Nevent = NULL;
-  hHOM_modVCG_Nevent = NULL;
+  hHOM_modUCG_Nevent = nullptr;
+  hHOM_modVCG_Nevent = nullptr;
 
-  hHOM_ResEta25_U = NULL;
-  hHOM_ResEta25_V = NULL;
+  hHOM_ResEta25_U = nullptr;
+  hHOM_ResEta25_V = nullptr;
 
-  hHOM_modUeta2x2_modVeta2x2 = NULL;
-  hHOM_modUCG2x2_modVCG2x2 = NULL;
-  hHOM_modUeta5x5_modVeta5x5 = NULL;
-  hHOM_modUCG5x5_modVCG5x5 = NULL;
+  hHOM_modUeta2x2_modVeta2x2 = nullptr;
+  hHOM_modUCG2x2_modVCG2x2 = nullptr;
+  hHOM_modUeta5x5_modVeta5x5 = nullptr;
+  hHOM_modUCG5x5_modVCG5x5 = nullptr;
 
   //--------------------------------------------------------------------------
   // cluster shape study, JB 2010/04/13 based on cdritsa stuff
   //--------------------------------------------------------------------------
 
-  hClusterMeanForm = NULL;
-  hprojLForm = NULL;
-  hprojCForm = NULL;
+  hClusterMeanForm = nullptr;
+  hprojLForm = nullptr;
+  hprojCForm = nullptr;
   for (int i = 0; i < 10; i++)
   {
-    hCountPixels[i] = NULL;
-    hPixelsOverSNR[i] = NULL;
-    hPixelsOverCharge[i] = NULL;
-    hprojL[i] = NULL;
-    hprojC[i] = NULL;
-    Cluster[i] = NULL;
-    hMultVsFormFactor[i] = NULL;
-    hMultVsFormFactor1D[i] = NULL; // clm added back 1D clu mult. 2013.08.25
+    hCountPixels[i] = nullptr;
+    hPixelsOverSNR[i] = nullptr;
+    hPixelsOverCharge[i] = nullptr;
+    hprojL[i] = nullptr;
+    hprojC[i] = nullptr;
+    Cluster[i] = nullptr;
+    hMultVsFormFactor[i] = nullptr;
+    hMultVsFormFactor1D[i] = nullptr; // clm added back 1D clu mult. 2013.08.25
   }
-  hChargeCoG_Correl = NULL;
-  hChargeCoG_Correl2 = NULL;
-  h_SNRratioL = NULL;
-  hClusterTest1 = NULL;
-  hClusterTest2 = NULL;
-  hClusterSizeInLines = NULL; // JB 2014/03/31
-  hClusterSizeInColumns = NULL;
-  hClusterSize2DInLineAndColumns = NULL; // AP 2014/09/25
-  hChargeDistrInSeed = NULL;
-  hChargeDistrInLine = NULL;
-  hChargeDistrIn3rdLeftNeigh = NULL;
-  hChargeDistrIn2ndLeftNeigh = NULL;
-  hChargeDistrIn1stLeftNeigh = NULL;
-  hChargeDistrIn3rdRightNeigh = NULL;
-  hChargeDistrIn2ndRightNeigh = NULL;
-  hChargeDistrIn1stRightNeigh = NULL;
-  hClusterTypes = NULL;        // JB 2014/03/31
-  hClusterTypesBeyond4 = NULL; // JB 2015/05/12
+  hChargeCoG_Correl = nullptr;
+  hChargeCoG_Correl2 = nullptr;
+  h_SNRratioL = nullptr;
+  hClusterTest1 = nullptr;
+  hClusterTest2 = nullptr;
+  hClusterSizeInLines = nullptr; // JB 2014/03/31
+  hClusterSizeInColumns = nullptr;
+  hClusterSize2DInLineAndColumns = nullptr; // AP 2014/09/25
+  hChargeDistrInSeed = nullptr;
+  hChargeDistrInLine = nullptr;
+  hChargeDistrIn3rdLeftNeigh = nullptr;
+  hChargeDistrIn2ndLeftNeigh = nullptr;
+  hChargeDistrIn1stLeftNeigh = nullptr;
+  hChargeDistrIn3rdRightNeigh = nullptr;
+  hChargeDistrIn2ndRightNeigh = nullptr;
+  hChargeDistrIn1stRightNeigh = nullptr;
+  hClusterTypes = nullptr;        // JB 2014/03/31
+  hClusterTypesBeyond4 = nullptr; // JB 2015/05/12
 
-  ang1 = NULL;
-  ang2 = NULL;
-  ang3 = NULL;
-  ang4 = NULL;
-  ang5 = NULL;
-  ang5v2 = NULL;
-  ang6 = NULL; // clm added back 1D clu mult. 2013.08.25
-  shape = NULL;
-  solo = NULL;
-  projL = NULL;
-  projC = NULL;
+  ang1 = nullptr;
+  ang2 = nullptr;
+  ang3 = nullptr;
+  ang4 = nullptr;
+  ang5 = nullptr;
+  ang5v2 = nullptr;
+  ang6 = nullptr; // clm added back 1D clu mult. 2013.08.25
+  shape = nullptr;
+  solo = nullptr;
+  projL = nullptr;
+  projC = nullptr;
 
   //------------------------------------------------------------------------------
   // Binary output histos.
   //------------------------------------------------------------------------------
-  hBinary_test = NULL;
-  hBinary_NumberOf_1_ALL = NULL;
-  hBinary_NumberOf_1_goodhit = NULL;
-  hBinary_NumberOf_1_submatrix = NULL;
-  hBinary_Nhitperpixel_submatrix = NULL;
-  hBinary_NhitRateperpixel_submatrix = NULL;
+  hBinary_test = nullptr;
+  hBinary_NumberOf_1_ALL = nullptr;
+  hBinary_NumberOf_1_goodhit = nullptr;
+  hBinary_NumberOf_1_submatrix = nullptr;
+  hBinary_Nhitperpixel_submatrix = nullptr;
+  hBinary_NhitRateperpixel_submatrix = nullptr;
 
   //------------------------------------------------------------------------------
-  // MiniVectors Histograms  = NULL; NCS , 2010/01/21
+  // MiniVectors Histograms  = nullptr; NCS , 2010/01/21
   //------------------------------------------------------------------------------
-  hDiffPosX = NULL;     // NCS 210110
-  hDiffPosY = NULL;     // NCS 210110
-  hDiffAngleX = NULL;   // NCS 210110
-  hDiffAngleY = NULL;   // NCS 210110
-  hDiffAngleX11 = NULL; // JB 2011/11/01
-  hDiffAngleY11 = NULL;
-  hDiffAngleX12 = NULL; // JB 2011/11/01
-  hDiffAngleY12 = NULL;
-  hDiffAngleX21 = NULL; // JB 2011/11/01
-  hDiffAngleY21 = NULL;
-  hDiffAngleX22 = NULL; // JB 2011/11/01
-  hDiffAngleY22 = NULL;
-  hDiffAngleXg1g1 = NULL; // JB 2011/11/01
-  hDiffAngleYg1g1 = NULL;
-  hxtxPL3 = NULL; // NCS 260110 not CG position only Hu Hv
-  hytyPL3 = NULL; // NCS 260110
-  hxtxPL4 = NULL; // NCS 260110
-  hytyPL4 = NULL; // NCS 260110
-  hutuPL3 = NULL; // NCS 260110 not CG position only Hu Hv
-  hvtvPL3 = NULL; // NCS 260110
-  hutuPL4 = NULL; // NCS 260110
-  hvtvPL4 = NULL; // NCS 260110
-  // TH2F* hdiffydiffx = NULL; // JB 2011/11/01
-  // TH2F* hdiffydiffx11 = NULL; // JB 2011/11/01
-  // TH2F* hdiffydiffx12 = NULL; // JB 2011/11/01
-  // TH2F* hdiffydiffx21 = NULL; // JB 2011/11/01
-  // TH2F* hdiffydiffx22 = NULL; // JB 2011/11/01
-  // TH2F* hdiffydiffxg1g1 = NULL; // JB 2011/11/01
+  hDiffPosX = nullptr;     // NCS 210110
+  hDiffPosY = nullptr;     // NCS 210110
+  hDiffAngleX = nullptr;   // NCS 210110
+  hDiffAngleY = nullptr;   // NCS 210110
+  hDiffAngleX11 = nullptr; // JB 2011/11/01
+  hDiffAngleY11 = nullptr;
+  hDiffAngleX12 = nullptr; // JB 2011/11/01
+  hDiffAngleY12 = nullptr;
+  hDiffAngleX21 = nullptr; // JB 2011/11/01
+  hDiffAngleY21 = nullptr;
+  hDiffAngleX22 = nullptr; // JB 2011/11/01
+  hDiffAngleY22 = nullptr;
+  hDiffAngleXg1g1 = nullptr; // JB 2011/11/01
+  hDiffAngleYg1g1 = nullptr;
+  hxtxPL3 = nullptr; // NCS 260110 not CG position only Hu Hv
+  hytyPL3 = nullptr; // NCS 260110
+  hxtxPL4 = nullptr; // NCS 260110
+  hytyPL4 = nullptr; // NCS 260110
+  hutuPL3 = nullptr; // NCS 260110 not CG position only Hu Hv
+  hvtvPL3 = nullptr; // NCS 260110
+  hutuPL4 = nullptr; // NCS 260110
+  hvtvPL4 = nullptr; // NCS 260110
+  // TH2F* hdiffydiffx = nullptr; // JB 2011/11/01
+  // TH2F* hdiffydiffx11 = nullptr; // JB 2011/11/01
+  // TH2F* hdiffydiffx12 = nullptr; // JB 2011/11/01
+  // TH2F* hdiffydiffx21 = nullptr; // JB 2011/11/01
+  // TH2F* hdiffydiffx22 = nullptr; // JB 2011/11/01
+  // TH2F* hdiffydiffxg1g1 = nullptr; // JB 2011/11/01
 
   //------------------------------------------------------------------------------
-  // MimosaVertexFinder Histograms  = NULL; LC , 2012/09/06
+  // MimosaVertexFinder Histograms  = nullptr; LC , 2012/09/06
   //------------------------------------------------------------------------------
 
-  hVertexPosX = NULL;
-  hVertexPosY = NULL;
-  hVertexPosZ = NULL;
-  hVertexTrackDistance = NULL;
-  hVertexPosXY = NULL;
-  hVertexTrackChi2 = NULL;
+  hVertexPosX = nullptr;
+  hVertexPosY = nullptr;
+  hVertexPosZ = nullptr;
+  hVertexTrackDistance = nullptr;
+  hVertexPosXY = nullptr;
+  hVertexTrackChi2 = nullptr;
 
-  cVertexFinder = NULL;
+  cVertexFinder = nullptr;
 
-  cMiniVec = NULL;
-  cMiniVec1 = NULL;
+  cMiniVec = nullptr;
+  cMiniVec1 = nullptr;
 
   //------------------------------------------------------------------------------
   // canvas
   //------------------------------------------------------------------------------
-  c2 = NULL;
-  casym = NULL;
-  ceffi = NULL;
-  ccomp = NULL;
-  ccomp2 = NULL;
-  ccomp3 = NULL;
-  c3 = NULL;
-  c3_2 = NULL;
-  c4 = NULL;
-  cClusterProperties2 = NULL;
-  cClusterProperties3 = NULL;
-  cClusterProperties4 = NULL;
-  c4_2 = NULL;
-  c5 = NULL;
-  c6 = NULL;
-  c7 = NULL;
+  c2 = nullptr;
+  casym = nullptr;
+  ceffi = nullptr;
+  ccomp = nullptr;
+  ccomp2 = nullptr;
+  ccomp3 = nullptr;
+  c3 = nullptr;
+  c3_2 = nullptr;
+  c4 = nullptr;
+  cClusterProperties2 = nullptr;
+  cClusterProperties3 = nullptr;
+  cClusterProperties4 = nullptr;
+  c4_2 = nullptr;
+  c5 = nullptr;
+  c6 = nullptr;
+  c7 = nullptr;
 
   for (int i = 0; i < numcanvasSN; i++)
-    cSN[i] = NULL; //!
+    cSN[i] = nullptr; //!
   for (int i = 0; i < numcanvas; i++)
-    cRef[i] = NULL; //!
+    cRef[i] = nullptr; //!
   for (int i = 0; i < numcanvasOptimize; i++)
-    cOptimize[i] = NULL; //!
+    cOptimize[i] = nullptr; //!
 
-  cM8 = NULL;
+  cM8 = nullptr;
 
-  PixHom = NULL;
-  PixHom2 = NULL;
-  PixHom3 = NULL;
-  PixHom4 = NULL;
-  PixHom5 = NULL;
-  PixHom6 = NULL;
+  PixHom = nullptr;
+  PixHom2 = nullptr;
+  PixHom3 = nullptr;
+  PixHom4 = nullptr;
+  PixHom5 = nullptr;
+  PixHom6 = nullptr;
 
   // graphs
-  greff = NULL;
-  grnum = NULL;
-  grevt = NULL;
-  ChargeSpread = NULL;
+  greff = nullptr;
+  grnum = nullptr;
+  grevt = nullptr;
+  ChargeSpread = nullptr;
 
-  bar2 = NULL;
+  bar2 = nullptr;
 
   //------------------------------------------------------------------------------
   // MC Geneation for telescope resolution evaluation
   //------------------------------------------------------------------------------
-  hTrackChi2_MC = NULL;
-  hTrackSlopeX_MC = NULL;
-  hTrackSlopeY_MC = NULL;
-  hTrackNHits_MC = NULL;
-  hTrackPlanesUsed_MC = NULL;
+  hTrackChi2_MC = nullptr;
+  hTrackSlopeX_MC = nullptr;
+  hTrackSlopeY_MC = nullptr;
+  hTrackNHits_MC = nullptr;
+  hTrackPlanesUsed_MC = nullptr;
   for (int i = 0; i < MynPlanes; i++)
   {
-    hResidualU_MC[i] = NULL;
-    hResidualV_MC[i] = NULL;
+    hResidualU_MC[i] = nullptr;
+    hResidualV_MC[i] = nullptr;
   }
   for (int i = 0; i < MyBins_GlobalResolution; i++)
   {
-    hTrackResidualAtDUT_U[i] = NULL;
-    hTrackResidualAtDUT_V[i] = NULL;
+    hTrackResidualAtDUT_U[i] = nullptr;
+    hTrackResidualAtDUT_V[i] = nullptr;
   }
 
-  h_TelescopeResolution_Scan_U = NULL;
-  h_TelescopeResolution_Scan_V = NULL;
-  h_ResidualAtDUT_Scan_U = NULL;
-  h_ResidualAtDUT_Scan_V = NULL;
+  h_TelescopeResolution_Scan_U = nullptr;
+  h_TelescopeResolution_Scan_V = nullptr;
+  h_ResidualAtDUT_Scan_U = nullptr;
+  h_ResidualAtDUT_Scan_V = nullptr;
 
-  lSolResolutionU1 = NULL;
-  lSolResolutionU2 = NULL;
-  lSolResolutionU3 = NULL;
-  lSolResolutionV1 = NULL;
-  lSolResolutionV2 = NULL;
-  lSolResolutionV3 = NULL;
+  lSolResolutionU1 = nullptr;
+  lSolResolutionU2 = nullptr;
+  lSolResolutionU3 = nullptr;
+  lSolResolutionV1 = nullptr;
+  lSolResolutionV2 = nullptr;
+  lSolResolutionV3 = nullptr;
 
-  cgeometry = NULL;
-  ccumultrack3 = NULL;
-  ccumultrack4 = NULL;
-  ccumultrack5 = NULL;
+  cgeometry = nullptr;
+  ccumultrack3 = nullptr;
+  ccumultrack4 = nullptr;
+  ccumultrack5 = nullptr;
   for (int i = 0; i < MyBins_GlobalResolution; i++)
-    cresAtDUT[i] = NULL;
-  cresAtDUT_vs_SensorSP = NULL;
+    cresAtDUT[i] = nullptr;
+  cresAtDUT_vs_SensorSP = nullptr;
 
   for (int i = 0; i < MyMaxEventDisplay; i++)
   {
     for (int j = 0; j < 10; j++)
     {
-      RectracksXZ[i][j] = NULL;
-      RectracksYZ[i][j] = NULL;
+      RectracksXZ[i][j] = nullptr;
+      RectracksYZ[i][j] = nullptr;
     }
   }
-  leg_TelResMC = NULL;
+  leg_TelResMC = nullptr;
 
   //------------------------------------------------------------------------------
   // User histograms
   //------------------------------------------------------------------------------
-  cUser = NULL;
-  hUserHitCorrelationLine = NULL;
-  hUserHitCorrelationCol = NULL;
+  cUser = nullptr;
+  hUserHitCorrelationLine = nullptr;
+  hUserHitCorrelationCol = nullptr;
 
   NPages = 0;
 }
@@ -1347,7 +1347,7 @@ void MimosaAnalysis::GetMiEta()
 #endif
 
   // float FitParam[7];
-  if (CorStatus != 2 && fitfa != NULL && fitfu != NULL && fitfv != NULL)
+  if (CorStatus != 2 && fitfa != nullptr && fitfu != nullptr && fitfv != nullptr)
   {
     for (int ii = 0; ii < 7; ii++)
     {
@@ -2109,7 +2109,7 @@ DPrecAlign *MimosaAnalysis::AlignMimosa(int aDistance)
          << "** WARNING: there is no data points to fit in the current alignment object.";
     cout << "    --> aligning MIMOSA is not possible, keeping the current parameters!" << endl
          << endl;
-    return NULL; // added JB 2012/08/18
+    return nullptr; // added JB 2012/08/18
   }
   else
   {
@@ -3634,7 +3634,7 @@ void MimosaAnalysis::ClusterPosition_compute(DAuthenticHit *thehit, DPrecAlign *
   // Convert in tracker frame
   // JB 2013/05/01
   DR3 aPosition(hU, hV, hW);
-  if (align != NULL)
+  if (align != nullptr)
   {
     hX = align->TransformHitToTracker(aPosition)(0);
     hY = align->TransformHitToTracker(aPosition)(1);
