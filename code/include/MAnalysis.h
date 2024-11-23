@@ -78,6 +78,7 @@
 #include <tuple>
 #include <unordered_map>
 #include <functional>
+#include <sstream>
 
 class MRaw;
 class MRax;
@@ -160,9 +161,9 @@ private:
   TString fLaunchedDirectory;    // directory where taf has been launched // VR 2014/06/30
   std::string fWorkingDirectory; // directory where taf will work, choose in MimosaAnalysis::MimosaAnalysis() // VR 2014/06/30
   // TString ROOTDIR; // removed by JB 2011/04/12
-  TString ResultDirName; // JB 2011/04/12
-  DGlobalTools fTool;    // JB 2011/07/18
-  char RootFile[300];    // name of the input DSF file
+  TString ResultDirName;  // JB 2011/04/12
+  DGlobalTools fTool;     // JB 2011/07/18
+  std::string m_rootFile; // name of the input DSF file
 
   // ------------------------
   // Input tree
@@ -681,7 +682,7 @@ public:
   } // JB 2012/05/04 deal with RunNumber<1000 case
 
   void SetFileNumber(int aUserFileNumber = 0) { fUserFileNumber = aUserFileNumber; };
-  void SetDSFFile(const Char_t *aFileName) { sprintf(RootFile, "%s", aFileName); }; // JB 2013/09/19
+  void SetDSFFile(const Char_t *aFileName) { m_rootFile = aFileName; }; // JB 2013/09/19
   DPrecAlign *AlignMimosa(int aDistance);
   // DPrecAlign*  AlignPrecMimosa(DPrecAlign* initAlignment, bool modeAuto); // LC 2012/09/06.
   // TFile*     InitCorPar(int aRun, int aPlane, int &aStatus);

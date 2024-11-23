@@ -135,7 +135,7 @@ MimosaAnalysis::MimosaAnalysis()
 
   // ROOTDIR = gSystem->Getenv("ROOTDIR"); // suppressed by JB 2011/04/12
 
-  sprintf(RootFile, "");
+  m_rootFile = "";
   theCorFile = 0;
 
   fSession = nullptr;
@@ -1044,38 +1044,26 @@ MimosaAnalysis::MimosaAnalysis()
 //
 void MimosaAnalysis::MergingPDFFiles(void)
 {
+  std::stringstream ss;
+  ss << "run" << RunNumber << "Pl" << ThePlaneNumber << "_ClCharge";
+  std::string fOutName = fTool.LocalizeDirName(ss.str().c_str());
+  const auto EPSName_final = CreateGlobalResultDir() + fOutName + ".pdf";
 
-  char fOutName[200];
-  sprintf(fOutName, "run%dPl%d_ClCharge", RunNumber, ThePlaneNumber);
-  sprintf(fOutName, "%s", fTool.LocalizeDirName(fOutName));
-  TString EPSName_final = TString(CreateGlobalResultDir().c_str()) +
-                          TString(fOutName) + TString(".pdf");
+  std::string listOfFiles{""};
 
-  TString command;
-  TString ListOfFiles("");
-
-  // cout << endl;
   for (int i = 0; i < NPages; i++)
   {
-    TString TmpFileName = TString(CreateGlobalResultDir().c_str()) +
-                          TString(fOutName) + TString("_tmpFile") +
-                          long(i + 1) + (".pdf");
-    // cout << "File " << i+1 << " to be merged " << TmpFileName.Data() << endl;
-    ListOfFiles += TmpFileName + TString("   ");
+    std::stringstream tmpSS;
+    tmpSS << CreateGlobalResultDir() << fOutName << "_tmpFile" << (i + 1) << ".pdf" << "   ";
+    listOfFiles += tmpSS.str();
   }
-  // cout << endl;
-
-  // cout << endl;
-  command = TString("gs -dQUIET -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=") +
-            EPSName_final + TString(" -dBATCH ");
-  command += ListOfFiles;
-  // cout << command.Data() << endl;
-  gSystem->Exec(command.Data());
-  command = TString("rm ");
-  command += ListOfFiles;
-  // cout << command.Data() << endl;
-  gSystem->Exec(command.Data());
-  // cout << endl;
+  auto command = "gs -dQUIET -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=" +
+                 EPSName_final + " -dBATCH ";
+  command += listOfFiles;
+  gSystem->Exec(command.c_str());
+  command = "rm ";
+  command += listOfFiles;
+  gSystem->Exec(command.c_str());
 }
 //______________________________________________________________________________
 //
@@ -1091,23 +1079,29 @@ int MimosaAnalysis::OpenInputFile()
   // Modified: JB 2013/09/19 allow for a pre-definition of the file name
   // Modified: JB 2014/02/10 Error on # events <=0
 
-  int fileNumber = GetFileNumber();
+  const auto fileNumber = GetFileNumber();
 
   // If RootFile not yet define, use a number to set it
-  if (strlen(RootFile) == 0 && fileNumber)
+  if (m_rootFile.empty() && fileNumber)
   {
+    std::stringstream ss;
+    ss << fSession->GetSummaryFilePath() << "/run"
+       << fSession->GetRunNumber() << "_0"
+       << fileNumber << ".root";
+    m_rootFile = fTool.LocalizeDirName(ss.str().c_str()); // JB 2011/07/07
+  }
 
-    sprintf(RootFile, "%s/run%d_0%d.root",
-            (const char *)fSession->GetSummaryFilePath(),
-            fSession->GetRunNumber(), GetFileNumber());
-    sprintf(RootFile, "%s", fTool.LocalizeDirName(RootFile)); // JB 2011/07/07
+  if (m_rootFile.empty())
+  {
+    Error("MAnalysis", "No input file specified ! --> STOP.");
+    return 0;
   }
 
   // Open the file if existing
-  if (strlen(RootFile) != 0)
+  if (!m_rootFile.empty())
   {
-    TFile *fileInputTree = new TFile(RootFile);
-    Info("MimosaAnalysis", "Input file %s opened", RootFile);
+    TFile *fileInputTree = new TFile(m_rootFile.c_str());
+    Info("MimosaAnalysis", "Input file %s opened", m_rootFile.c_str());
 
     t = (TTree *)fileInputTree->Get("T");
     Evt = new DEvent();
@@ -1119,6 +1113,7 @@ int MimosaAnalysis::OpenInputFile()
     {
       Error("MimosaPro",
             " The input file contains an incorrect number of events %d!", Nevt);
+      return 0;
     }
     else
     {
@@ -1126,13 +1121,6 @@ int MimosaAnalysis::OpenInputFile()
     }
 
     return Nevt;
-  }
-
-  // Otherwise return 0
-  else
-  {
-    Error("MAnalysis", "No input file specified ! --> STOP.");
-    return 0;
   }
 }
 
