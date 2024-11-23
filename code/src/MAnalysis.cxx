@@ -2110,6 +2110,8 @@ int MimosaAnalysis::HotPixel_test(int aPixelIndex)
   // The function only evaluates this if pixel map usage is enabled (TheUsePixelMap == 1)
   // and if the pixel map is available for reading (Option_read_Pixel_map == 1).
 
+  // TODO: create an enum class HotPixel{HOT, NOT_HOT} to return this information to improve ease of read.
+
   if (TheUsePixelMap == 0)
     return 0;
 
