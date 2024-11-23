@@ -2100,7 +2100,7 @@ void MimosaAnalysis::HotPixel_init(int useMap)
   if (TheUsePixelMap && Option_read_Pixel_map == 1)
   {
     HotPixelFile = new TFile(m_hotPixelFileName.c_str(), "READ");
-    h2HotPixelMap = (TH2F *)HotPixelFile->Get("h2HotPixelMap");
+    h2HotPixelMap = static_cast<TH2F *>(HotPixelFile->Get("h2HotPixelMap"));
   }
 
   Info("HotPixel_init", "End hot pixel map preparation, usage = %d and %d.",
