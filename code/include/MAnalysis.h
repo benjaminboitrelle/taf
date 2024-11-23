@@ -79,6 +79,7 @@
 #include <unordered_map>
 #include <functional>
 #include <sstream>
+#include <memory>
 
 class MRaw;
 class MRax;
@@ -170,7 +171,7 @@ private:
   // ------------------------
   // JB 2010/08/30
   TTree *t;
-  DEvent *Evt;
+  std::unique_ptr<DEvent> Evt;
   TBranch *branch;
 
   // ------------------------
@@ -190,7 +191,7 @@ private:
   int ThePlaneNumber;
   int ThePlaneNumber2; // JB 2011/10/30
   int TheLadderNumber; // JB 2014/01/10
-  int Nevt, User_MaxEvt;
+  int m_nEvt, User_MaxEvt;
 
   int ThesubmatrixNumber;
   int ThesubmatrixNumber2; // JB 2015/12/15

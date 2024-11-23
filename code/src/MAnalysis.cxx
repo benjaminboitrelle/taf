@@ -1098,30 +1098,45 @@ int MimosaAnalysis::OpenInputFile()
   }
 
   // Open the file if existing
-  if (!m_rootFile.empty())
+
+  auto fileInputTree = std::make_unique<TFile>(m_rootFile.c_str());
+  if (!fileInputTree || !fileInputTree->IsOpen())
   {
-    TFile *fileInputTree = new TFile(m_rootFile.c_str());
-    Info("MimosaAnalysis", "Input file %s opened", m_rootFile.c_str());
-
-    t = (TTree *)fileInputTree->Get("T");
-    Evt = new DEvent();
-    branch = t->GetBranch("fEvent");
-    branch->SetAddress(&Evt);
-
-    Nevt = (int)t->GetEntries();
-    if (Nevt <= 0)
-    {
-      Error("MimosaPro",
-            " The input file contains an incorrect number of events %d!", Nevt);
-      return 0;
-    }
-    else
-    {
-      Info("MimosaPro", "There is %d events in the input file.", Nevt);
-    }
-
-    return Nevt;
+    Error("MimosaAnalysis", "Failed to open input file %s", m_rootFile.c_str());
+    return 0;
   }
+
+  Info("MimosaAnalysis", "Input file %s opened", m_rootFile.c_str());
+
+  t = static_cast<TTree *>(fileInputTree->Get("T"));
+  if (!t)
+  {
+    Error("MimosaAnalysis", "TTree 'T' not found in file %s", m_rootFile.c_str());
+    return 0;
+  }
+
+  Evt = std::make_unique<DEvent>();
+  branch = t->GetBranch("fEvent");
+  if (!branch)
+  {
+    Error("MimosaAnalysis", "Branch 'fEvent' not found in the TTree.");
+    return 0;
+  }
+  branch->SetAddress(&Evt);
+
+  m_nEvt = static_cast<int>(t->GetEntries());
+  if (m_nEvt <= 0)
+  {
+    Error("MimosaPro",
+          " The input file contains an incorrect number of events %d!", m_nEvt);
+    return 0;
+  }
+  else
+  {
+    Info("MimosaPro", "There is %d events in the input file.", m_nEvt);
+  }
+
+  return m_nEvt;
 }
 
 std::string MimosaAnalysis::CreateGlobalResultDir()
