@@ -2070,26 +2070,19 @@ void MimosaAnalysis::CreateNewEta()
 //
 void MimosaAnalysis::HotPixel_init(int useMap)
 {
-  // Initialize the tools need for the hot pixel map.
-  // If useMap = 0, the map is not used,
-  //    useMap = 2, the map is generated,
-  //    useMap = 1, the map is used (after it has been generated).
-  //
-  // Note the two cut values are hardcoded here for the moment.
-  //
-  // JB 2011/11/23 imported from A. Besson june 2004
-
+  // Set flags based on the useMap argument:
+  // - If useMap > 0, enable pixel map usage
+  // - If useMap == 1, enable reading the pixel map
   TheUsePixelMap = (useMap > 0);
   Option_read_Pixel_map = (useMap == 1);
 
-  // If the rate limits are still 0, use the hardcoded initialization below,
-  // otherwise keep the previous value.
+  // Initialize the cut-off values if they haven't been set previously
   if (CUT_MaxHitRatePerPixel < 1.e-3)
   {
-    CUT_MaxHitRatePerPixel = 0.05; // if the pixel is a seed too many times in
-                                   // the run, remove the hit.
-    CUT_MinHitRatePerPixel =
-        0.; // you can also remove pixels with low occupancy for testing
+    // Set hardcoded values if not initialized
+
+    CUT_MaxHitRatePerPixel = 0.05; // Max hit rate per pixel (remove hit if exceeded)
+    CUT_MinHitRatePerPixel = 0.;   // Min hit rate per pixel (allow for testing low occupancy pixels)
   }
   std::stringstream ssHotPixelFileName;
   ssHotPixelFileName << "hotPixelMap_run" << RunNumber << "_pl" << ThePlaneNumber << ".root";
@@ -2111,13 +2104,17 @@ void MimosaAnalysis::HotPixel_init(int useMap)
 //
 int MimosaAnalysis::HotPixel_test(int aPixelIndex)
 {
-  // Return if the pixel is considered as "hot" (1) or not (0).
-  // Always returns 0 if TheUsePixelMap==0.
-  //
-  // JB 2011/11/23 imported from A. Besson june 2004
+  // Check if the pixel is considered "hot" based on the pixel map.
+  // A pixel is "hot" if its hit rate exceeds a maximum threshold (CUT_MaxHitRatePerPixel)
+  // or falls below a minimum threshold (CUT_MinHitRatePerPixel).
+  // The function only evaluates this if pixel map usage is enabled (TheUsePixelMap == 1)
+  // and if the pixel map is available for reading (Option_read_Pixel_map == 1).
 
-  int iRow = aPixelIndex % NofPixelInRaw + 1;
-  int iCol = aPixelIndex / NofPixelInRaw + 1;
+  if (TheUsePixelMap == 0)
+    return 0;
+
+  const auto iRow = aPixelIndex % NofPixelInRaw + 1;
+  const auto iCol = aPixelIndex / NofPixelInRaw + 1;
   if (TheUsePixelMap == 1 && Option_read_Pixel_map == 1 &&
       (h2HotPixelMap->GetBinContent(iRow, iCol) > CUT_MaxHitRatePerPixel ||
        h2HotPixelMap->GetBinContent(iRow, iCol) < CUT_MinHitRatePerPixel))
