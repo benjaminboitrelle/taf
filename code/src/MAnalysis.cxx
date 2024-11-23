@@ -1185,7 +1185,7 @@ void MimosaAnalysis::PrepareOnlineDisplay()
   std::stringstream ssGlobalTitle;
 
   ssGlobalTitle << "Run " << RunNumber << " Plane " << ThePlaneNumber << " Gain: " << calibration;
-  TPaveLabel *gt = new TPaveLabel(0.01, 0.94, 0.2, 0.9999, ssGlobalTitle.str().c_str());
+  auto gt = std::make_unique<TPaveLabel>(0.01, 0.94, 0.2, 0.9999, ssGlobalTitle.str().c_str());
   gt->Draw();
 
   Info("MimosaAnalysis", "Display prepared");
