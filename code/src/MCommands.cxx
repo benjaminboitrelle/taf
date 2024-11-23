@@ -106,14 +106,14 @@ ClassImp(MimosaAnalysis)
   // -- Open the input file containing the TTree
   //----------------------------------------------------------------------------------
 
-  Nevt = OpenInputFile(); // total number of events in the tree
-  if (Nevt <= 0)
+  m_nEvt = OpenInputFile(); // total number of events in the tree
+  if (m_nEvt <= 0)
   {
-    Error("MimosaPro", " The input file contains an incorrect number of events %d!", Nevt);
+    Error("MimosaPro", " The input file contains an incorrect number of events %d!", m_nEvt);
   }
   else
   {
-    Info("MimosaPro", "There is %d events in the input file.", Nevt);
+    Info("MimosaPro", "There is %d events in the input file.", m_nEvt);
   }
 
   //----------------------------------------------------------------------------------
@@ -156,7 +156,7 @@ ClassImp(MimosaAnalysis)
 
   // Int_t *IndexOfGoodHitsInEvent = new Int_t[CUT_MaxNbOfHits];
   Int_t IndexOfGoodHitsInEvent[4000]; // enlarge to 4000, JB 2010/08/27
-  // Bool_t FillHitSeparationRootFile =  kFALSE ;//kTRUE;// kFALSE ;
+  // Bool_t FillHitSeparationm_rootFile.c_str() =  kFALSE ;//kTRUE;// kFALSE ;
 
   //----------------------------------------------------------------------------------
   // CUTS
@@ -1593,7 +1593,7 @@ ClassImp(MimosaAnalysis)
   TDatime aTime;
   cout << "============================================" << endl;
   cout << aTime.AsString() << endl;
-  cout << "DSF file used as input: " << RootFile << endl;
+  cout << "DSF file used as input: " << m_rootFile.c_str() << endl;
   cout << "-------- RUN NUMBER = " << RunNumber << " Plane number = " << ThePlaneNumber
        << " submatrix Number = " << ThesubmatrixNumber << endl;
   cout << "-------- matched/good tracks in DUT = " << NofClMatchTrack << "  " << NtrkInMimo << "  " << MimosaEfficiency << endl;
@@ -1680,7 +1680,7 @@ ClassImp(MimosaAnalysis)
     command = TString("DSF file used as input:");
     Y -= initY;
     latex->DrawLatex(X, Y, command.Data());
-    command = TString(RootFile);
+    command = TString(m_rootFile.c_str());
     Y -= 0.03;
     latex->SetTextSize(0.02);
     latex->DrawLatex(X, Y, command.Data());
@@ -1890,7 +1890,7 @@ ClassImp(MimosaAnalysis)
             << MimosaEfficiency * 100.0 << "," << MimosaEfficiency_ERR * 100.0 << "," << hnpix_c->GetMean() << "," << hnpix_c->GetRMS() / sqrt(hnpix_c->GetEntries()) << ",";
     csvfile << setprecision(3) << "," << hnpix_c->GetBinContent(2) / hnpix_c->Integral() << "," << hnpix_c->GetBinContent(3) / hnpix_c->Integral() << "," << hnpix_c->GetBinContent(4) / hnpix_c->Integral() << "," << hnpix_c->GetBinContent(5) / hnpix_c->Integral() << "," << hnpix_c->GetBinContent(6) / hnpix_c->Integral() << "," << hnpix_c->GetBinContent(7) / hnpix_c->Integral() << "," << hnpix_c->GetBinContent(8) / hnpix_c->Integral() << "," << hnpix_c->GetBinContent(9) / hnpix_c->Integral() << ",";
     // MimosaResolution(); //MimosaResolution is run here in order to add information to the CSV file.
-    csvfile << RootFile << endl;
+    csvfile << m_rootFile.c_str() << endl;
     csvfile.close();
   }
   fClearDone = kFALSE;
@@ -1931,14 +1931,14 @@ void MimosaAnalysis::MimosaFakerate(Int_t MaxEvt, Float_t S2N_seed, Float_t S2N_
   // -- Open the input file containing the TTree
   //----------------------------------------------------------------------------------
 
-  Nevt = OpenInputFile(); // total number of events in the tree
-  if (Nevt <= 0)
+  m_nEvt = OpenInputFile(); // total number of events in the tree
+  if (m_nEvt <= 0)
   {
-    Error("MimosaFakerate", " The input file contains an incorrect number of events %d!", Nevt);
+    Error("MimosaFakerate", " The input file contains an incorrect number of events %d!", m_nEvt);
   }
   else
   {
-    Info("MimosaFakerate", "There is %d events in the input file.", Nevt);
+    Info("MimosaFakerate", "There is %d events in the input file.", m_nEvt);
   }
 
   //----------------------------------------------------------------------------------
@@ -2182,14 +2182,14 @@ void MimosaAnalysis::MimosaCalibration(Int_t MaxEvt, Float_t S2N_seed, Float_t S
 
   CorStatus = 2; // indicate CorPar file is not filled, JB 2010/08/27
 
-  Nevt = OpenInputFile(); // total number of events in the tree
-  if (Nevt <= 0)
+  m_nEvt = OpenInputFile(); // total number of events in the tree
+  if (m_nEvt <= 0)
   {
-    Error("MimosaCalibration", " The input file contains an incorrect number of events %d!", Nevt);
+    Error("MimosaCalibration", " The input file contains an incorrect number of events %d!", m_nEvt);
   }
   else
   {
-    Info("MimosaCalibration", "There is %d events in the input file.", Nevt);
+    Info("MimosaCalibration", "There is %d events in the input file.", m_nEvt);
   }
 
   //----------------------------------------------------------------------------------
@@ -2517,14 +2517,14 @@ void MimosaAnalysis::MimosaMiniVectors(Int_t MaxEvt, Int_t TrackHitDist, Short_t
   // -- Open the input file containing the TTree
   //----------------------------------------------------------------------------------
 
-  Nevt = OpenInputFile(); // total number of events in the tree
-  if (Nevt <= 0)
+  m_nEvt = OpenInputFile(); // total number of events in the tree
+  if (m_nEvt <= 0)
   {
-    Error("MimosaMiniVectors", " The input file contains an incorrect number of events %d!", Nevt);
+    Error("MimosaMiniVectors", " The input file contains an incorrect number of events %d!", m_nEvt);
   }
   else
   {
-    Info("MimosaMiniVectors", "There is %d events in the input file.", Nevt);
+    Info("MimosaMiniVectors", "There is %d events in the input file.", m_nEvt);
   }
 
   //----------------------------------------------------------------------------------
@@ -3348,14 +3348,14 @@ void MimosaAnalysis::MimosaPro2Planes(Int_t MaxEvt, Int_t TrackHitDist, Short_t 
   // -- Open the input file containing the TTree
   //----------------------------------------------------------------------------------
 
-  Nevt = OpenInputFile(); // total number of events in the tree
-  if (Nevt <= 0)
+  m_nEvt = OpenInputFile(); // total number of events in the tree
+  if (m_nEvt <= 0)
   {
-    Error("MimosaPro2Planes", " The input file contains an incorrect number of events %d!", Nevt);
+    Error("MimosaPro2Planes", " The input file contains an incorrect number of events %d!", m_nEvt);
   }
   else
   {
-    Info("MimosaPro2Planes", "There is %d events in the input file.", Nevt);
+    Info("MimosaPro2Planes", "There is %d events in the input file.", m_nEvt);
   }
 
   //----------------------------------------------------------------------------------
@@ -4163,14 +4163,14 @@ void MimosaAnalysis::MimosaVertex(Int_t MaxEvt, Short_t plane1, Short_t plane2)
   // -- Open the input file containing the TTree
   //----------------------------------------------------------------------------------
 
-  Nevt = OpenInputFile(); // total number of events in the tree
-  if (Nevt <= 0)
+  m_nEvt = OpenInputFile(); // total number of events in the tree
+  if (m_nEvt <= 0)
   {
-    Error("MimosaVertex", " The input file contains an incorrect number of events %d!", Nevt);
+    Error("MimosaVertex", " The input file contains an incorrect number of events %d!", m_nEvt);
   }
   else
   {
-    Info("MimosaVertex", "There is %d events in the input file.", Nevt);
+    Info("MimosaVertex", "There is %d events in the input file.", m_nEvt);
   }
 
   //----------------------------------------------------------------------------------
@@ -4475,14 +4475,14 @@ void MimosaAnalysis::MimosaVertexFinder(Int_t MaxEvt, Int_t submatrix, Int_t Geo
   // -- Open the input file containing the TTree
   //----------------------------------------------------------------------------------
 
-  Nevt = OpenInputFile(); // total number of events in the tree
-  if (Nevt <= 0)
+  m_nEvt = OpenInputFile(); // total number of events in the tree
+  if (m_nEvt <= 0)
   {
-    Error("MimosaVertexFinder", " The input file contains an incorrect number of events %d!", Nevt);
+    Error("MimosaVertexFinder", " The input file contains an incorrect number of events %d!", m_nEvt);
   }
   else
   {
-    Info("MimosaVertexFinder", "There is %d events in the input file.", Nevt);
+    Info("MimosaVertexFinder", "There is %d events in the input file.", m_nEvt);
   }
 
   //----------------------------------------------------------------------------------
@@ -4734,7 +4734,7 @@ void MimosaAnalysis::MimosaProLadder(Int_t MaxEvt, Int_t TrackHitDist, Float_t S
   // -- Open the input file containing the TTree
   //----------------------------------------------------------------------------------
 
-  Nevt = OpenInputFile(); // total number of events in the tree
+  m_nEvt = OpenInputFile(); // total number of events in the tree
 
   //----------------------------------------------------------------------------------
   // -- Chose the plane(matrix) and possibly the sub-matrix.
@@ -4776,7 +4776,7 @@ void MimosaAnalysis::MimosaProLadder(Int_t MaxEvt, Int_t TrackHitDist, Float_t S
 
   // Int_t *IndexOfGoodHitsInEvent = new Int_t[CUT_MaxNbOfHits];
   Int_t IndexOfGoodHitsInEvent[8000]; // enlarge to 4000, JB 2010/08/27
-  // Bool_t FillHitSeparationRootFile =  kFALSE ;//kTRUE;// kFALSE ;
+  // Bool_t FillHitSeparationm_rootFile.c_str() =  kFALSE ;//kTRUE;// kFALSE ;
 
   //----------------------------------------------------------------------------------
   // CUTS
@@ -5854,7 +5854,7 @@ void MimosaAnalysis::MimosaProLadder(Int_t MaxEvt, Int_t TrackHitDist, Float_t S
   //---------------------------------------------------------------
   //-- Print statistics out
   //---------------------------------------------------------------
-  cout << "DSF file used as input: " << RootFile << endl;
+  cout << "DSF file used as input: " << m_rootFile.c_str() << endl;
   cout << "-------- RUN NUMBER = " << RunNumber << " Plane number = " << ThePlaneNumber
        << " submatrix Number = " << ThesubmatrixNumber << endl;
   cout << "-------- matched/good tracks in DUT = " << NofClMatchTrack << "  " << NtrkInMimo << "  " << MimosaEfficiency << endl;
@@ -5911,7 +5911,7 @@ void MimosaAnalysis::MimosaProLadder(Int_t MaxEvt, Int_t TrackHitDist, Float_t S
     csvfile << aTime.AsString() << ",";
     csvfile << RunNumber << "," << ThePlaneNumber << "," << geomUmin << "," << geomUmax << "," << geomVmin << "," << geomVmax << "," << NofClMatchTrack << "," << NtrkInMimo << "," << MimosaEfficiency * 100.0 << "," << MimosaEfficiency_ERR * 100.0 << "," << hnpix_c->GetMean() << "," << hnpix_c->GetRMS() / sqrt(hnpix_c->GetEntries()) << ",";
     // MimosaResolution(); //MimosaResolution is run here in order to add information to the CSV file.
-    csvfile << RootFile << endl;
+    csvfile << m_rootFile.c_str() << endl;
     csvfile.close();
   }
   fClearDone = kFALSE;
@@ -5964,11 +5964,11 @@ void MimosaAnalysis::MimosaImaging(Int_t MaxEvt, Int_t submatrix, Int_t GeoMatri
 
   GetAnalysisGoal();
 
-  Nevt = OpenInputFile(); // total number of events in the tree
-  if (Nevt <= 0)
-    Error("MimosaImaging", " The input file contains an incorrect number of events %d!", Nevt);
+  m_nEvt = OpenInputFile(); // total number of events in the tree
+  if (m_nEvt <= 0)
+    Error("MimosaImaging", " The input file contains an incorrect number of events %d!", m_nEvt);
   else
-    Info("MimosaImaging", "There is %d events in the input file.", Nevt);
+    Info("MimosaImaging", "There is %d events in the input file.", m_nEvt);
 
   //----------------------------------------------------------------------------------
   // -- Chose the sub-matrix.
