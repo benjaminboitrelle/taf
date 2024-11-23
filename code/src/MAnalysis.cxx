@@ -55,7 +55,6 @@
 #endif
 #include "DSetup.h"
 #include <filesystem>
-#include <unordered_map>
 
 ClassImp(MimosaAnalysis)
 
@@ -63,6 +62,29 @@ ClassImp(MimosaAnalysis)
     //
     MimosaAnalysis *MimosaAnalysis::fgInstance =
         0; // returns pointer to global object
+const std::unordered_map<std::tuple<int, int, int>, MAnalysis::ClusterType, TupleHash, TupleKeyEqual> MimosaAnalysis::clusterMap = {
+    // 1 to 4 pixels
+    {std::make_tuple(1, 0, 0), MAnalysis::ClusterType::one_pix},
+    {std::make_tuple(2, 0, 2), MAnalysis::ClusterType::two_pix_row},     // 2 pixels in a row
+    {std::make_tuple(2, 2, 0), MAnalysis::ClusterType::two_pix_col},     // 2 pixels in a column
+    {std::make_tuple(3, 2, 2), MAnalysis::ClusterType::three_pix_L},     // L-shape (2x2 or 2x3)
+    {std::make_tuple(3, 3, 0), MAnalysis::ClusterType::three_pix_row},   // 3 pixels in a row
+    {std::make_tuple(3, 0, 3), MAnalysis::ClusterType::three_pix_col},   // 3 pixels in a column
+    {std::make_tuple(4, 2, 2), MAnalysis::ClusterType::four_pix_square}, // Square 2x2
+    {std::make_tuple(4, 2, 3), MAnalysis::ClusterType::four_pix_L_row},  // L shape, 2x3
+    {std::make_tuple(4, 3, 2), MAnalysis::ClusterType::four_pix_L_col},  // L shape, 3x2
+    {std::make_tuple(4, 0, 0), MAnalysis::ClusterType::four_others},     // Any other 4-pixel cluster
+    // More than 4 pixels
+    {std::make_tuple(5, 3, 2), MAnalysis::ClusterType::five_pix_squarerow}, // 5 pixels, 3x2
+    {std::make_tuple(5, 2, 3), MAnalysis::ClusterType::five_pix_squarecol}, // 5 pixels, 2x3
+    {std::make_tuple(5, 0, 0), MAnalysis::ClusterType::five_others},        // Any other 5-pixel cluster
+    {std::make_tuple(6, 2, 3), MAnalysis::ClusterType::six_pix_3col2row},   // 6 pixels, 3x2
+    {std::make_tuple(6, 3, 2), MAnalysis::ClusterType::six_pix_2col3row},   // 6 pixels, 2x3
+    {std::make_tuple(6, 0, 0), MAnalysis::ClusterType::six_others},         // Any other 6-pixel cluster
+    // More than 6 pixels
+    {
+        std::make_tuple(0, 0, 0), MAnalysis::ClusterType::more_than_six} // Any cluster larger than 6 pixels
+};
 
 MRaw *MimosaAnalysis::GetRaw()
 {
@@ -2657,7 +2679,7 @@ void MimosaAnalysis::ClusterShape_fill(DAuthenticHit *thehit)
   hClusterTypes->Fill(static_cast<int>(ClusterGeometricalType));
   if (NofPixelsInCluster >= 5)
     hClusterTypesBeyond4->Fill(static_cast<int>(ClusterGeometricalTypeBeyond4) -
-                               static_cast<int>(ClusterType::more_than_four));
+                               static_cast<int>(MAnalysis::ClusterType::more_than_four));
 
   for (int ithres = 0; ithres < nThresholds; ithres++)
   { // loop on thresholds
@@ -3522,88 +3544,23 @@ void MimosaAnalysis::SetClusterGeometricalType(int nPixelsInCluster, int lineSiz
   //  see the definition of clusterTypeDef in MAnalysis.h
   // JB 2014/03/31
   // From 1 to 4 pixels
-  if (nPixelsInCluster == 1)
+
+  const auto key = std::make_tuple(nPixelsInCluster, lineSizeOfCluster, columnSizeOfCluster);
+
+  auto it = clusterMap.find(key);
+
+  if (it != clusterMap.end())
   {
-    ClusterGeometricalType = ClusterType::one_pix;
-  }
-  else if (nPixelsInCluster == 2 && columnSizeOfCluster == 2)
-  {
-    ClusterGeometricalType = ClusterType::two_pix_col;
-  }
-  else if (nPixelsInCluster == 2 && lineSizeOfCluster == 2)
-  {
-    ClusterGeometricalType = ClusterType::two_pix_row;
-  }
-  else if (nPixelsInCluster == 3 &&
-           (lineSizeOfCluster == 2 || columnSizeOfCluster == 2))
-  {
-    ClusterGeometricalType = ClusterType::three_pix_L;
-  }
-  else if (nPixelsInCluster == 3 && columnSizeOfCluster == 3)
-  {
-    ClusterGeometricalType = ClusterType::three_pix_col;
-  }
-  else if (nPixelsInCluster == 3 && lineSizeOfCluster == 3)
-  {
-    ClusterGeometricalType = ClusterType::three_pix_row;
-  }
-  else if (nPixelsInCluster == 4 && lineSizeOfCluster == 2 &&
-           columnSizeOfCluster == 2)
-  {
-    ClusterGeometricalType = ClusterType::four_pix_square;
-  }
-  else if (nPixelsInCluster == 4 && lineSizeOfCluster == 2 &&
-           columnSizeOfCluster == 3)
-  {
-    ClusterGeometricalType = ClusterType::four_pix_L_row;
-  }
-  else if (nPixelsInCluster == 4 && lineSizeOfCluster == 3 &&
-           columnSizeOfCluster == 2)
-  {
-    ClusterGeometricalType = ClusterType::four_pix_L_col;
-  }
-  else if (nPixelsInCluster == 4)
-  {
-    ClusterGeometricalType = ClusterType::four_others;
+    // Found the matching ClusterType
+    ClusterGeometricalType = it->second;
   }
   else
   {
-    ClusterGeometricalType = ClusterType::more_than_four;
-
-    // From 5 pixels
-    if (nPixelsInCluster == 5 && lineSizeOfCluster == 3 &&
-        columnSizeOfCluster == 2)
-    {
-      ClusterGeometricalTypeBeyond4 = ClusterType::five_pix_squarerow;
-    }
-    else if (nPixelsInCluster == 5 && lineSizeOfCluster == 2 &&
-             columnSizeOfCluster == 3)
-    {
-      ClusterGeometricalTypeBeyond4 = ClusterType::five_pix_squarecol;
-    }
-    else if (nPixelsInCluster == 5)
-    {
-      ClusterGeometricalTypeBeyond4 = ClusterType::five_others;
-    }
-    else if (nPixelsInCluster == 6 && lineSizeOfCluster == 2 &&
-             columnSizeOfCluster == 3)
-    {
-      ClusterGeometricalTypeBeyond4 = ClusterType::six_pix_3col2row;
-    }
-    else if (nPixelsInCluster == 6 && lineSizeOfCluster == 3 &&
-             columnSizeOfCluster == 2)
-    {
-      ClusterGeometricalTypeBeyond4 = ClusterType::six_pix_2col3row;
-    }
-    else if (nPixelsInCluster == 6)
-    {
-      ClusterGeometricalTypeBeyond4 = ClusterType::six_others;
-    }
-    else
-    {
-      ClusterGeometricalTypeBeyond4 = ClusterType::more_than_six;
-    }
+    // Handle the case where no match is found, you can throw an error or handle default case
+    ClusterGeometricalType = MAnalysis::ClusterType::more_than_six; // Default case
   }
+  // rGeometricalTypeBeyond4 = it->second;
+  // }
 }
 
 //_____________________________________________________________________________

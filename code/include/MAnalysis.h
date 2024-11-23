@@ -75,6 +75,9 @@
 //---ADC
 
 #include <string>
+#include <tuple>
+#include <unordered_map>
+#include <functional>
 
 class MRaw;
 class MRax;
@@ -84,6 +87,55 @@ class DSetup; // forwards
 //---ADC
 
 class DR3;
+
+// Define the custom hash function for std::tuple<int, int, int>
+struct TupleHash : public std::unary_function<std::tuple<int, int, int>, std::size_t>
+{
+  template <typename T1, typename T2, typename T3>
+  std::size_t operator()(const std::tuple<T1, T2, T3> &t) const
+  {
+    auto h1 = std::hash<T1>{}(std::get<0>(t));
+    auto h2 = std::hash<T2>{}(std::get<1>(t));
+    auto h3 = std::hash<T3>{}(std::get<2>(t));
+
+    // Combine the three hashes (simple way using XOR and shifting)
+    return h1 ^ (h2 << 1) ^ (h3 << 2);
+  }
+};
+
+// Define the comparison operator for std::tuple<int, int, int>
+struct TupleKeyEqual : public std::binary_function<std::tuple<int, int, int>, std::tuple<int, int, int>, bool>
+{
+  bool operator()(const std::tuple<int, int, int> &tuple0, const std::tuple<int, int, int> &tuple1) const
+  {
+    return (std::get<0>(tuple0) == std::get<0>(tuple1) && std::get<1>(tuple0) == std::get<1>(tuple1) && std::get<2>(tuple0) == std::get<2>(tuple1));
+  }
+};
+
+namespace MAnalysis
+{
+  enum class ClusterType : int
+  {
+    one_pix = 1,
+    two_pix_row = 2,
+    two_pix_col = 3,
+    three_pix_L = 4,
+    three_pix_row = 5,
+    three_pix_col = 6,
+    four_pix_square = 7,
+    four_pix_L_row = 8,
+    four_pix_L_col = 9,
+    four_others = 10,
+    more_than_four = 11,
+    five_pix_squarerow = 12,
+    five_pix_squarecol = 13,
+    five_others = 14,
+    six_pix_3col2row = 15,
+    six_pix_2col3row = 16,
+    six_others = 17,
+    more_than_six = 18
+  };
+}
 
 class MimosaAnalysis : public MHist
 {
@@ -264,29 +316,8 @@ private:
   int LineSizeOfCluster; // JB 2014/03/31
   int ColumnSizeOfCluster;
 
-  enum class ClusterType : int
-  {
-    one_pix = 1,
-    two_pix_row,
-    two_pix_col,
-    three_pix_L,
-    three_pix_row,
-    three_pix_col,
-    four_pix_square,
-    four_pix_L_row,
-    four_pix_L_col,
-    four_others,
-    more_than_four,
-    five_pix_squarerow,
-    five_pix_squarecol,
-    five_others,
-    six_pix_3col2row,
-    six_pix_2col3row,
-    six_others,
-    more_than_six
-  };
-  ClusterType ClusterGeometricalType;
-  ClusterType ClusterGeometricalTypeBeyond4;
+  MAnalysis::ClusterType ClusterGeometricalType;
+  MAnalysis::ClusterType ClusterGeometricalTypeBeyond4;
 
   int IndexOfMaxPixel; // index of the pixel with the highest charge (in qonly array)
 
@@ -684,7 +715,8 @@ public:
   // int       *fChannel;                  //! pointer to Channels
   // int&       GetChannel(int aSk)              { return  fChannel[aSk-1];     }
   float *GettVect() { return tVect; }; // n res
-  //----ADC
+                                       //----ADC
+  static const std::unordered_map<std::tuple<int, int, int>, MAnalysis::ClusterType, TupleHash, TupleKeyEqual> clusterMap;
 
   // MC simulation parameters
   bool UsingTrackerResolution;
