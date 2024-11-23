@@ -251,7 +251,7 @@ private:
   int Option_read_Pixel_map; // Hot hit map read=1/write=0 option
   TH2F *h2HotPixelMap;       // pointer to the histogram containing pixel hit rate
   std::string m_hotPixelFileName;
-  TFile *HotPixelFile; // pointer to file containing the previous histogram
+  std::unique_ptr<TFile> m_hotPixelFile; // pointer to file containing the previous histogram
 
   // ------------------------
   // cuts

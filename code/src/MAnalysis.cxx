@@ -2099,8 +2099,8 @@ void MimosaAnalysis::HotPixel_init(int useMap)
   // If pixel map should be used and read, load the file and the histogram
   if (TheUsePixelMap && Option_read_Pixel_map == 1)
   {
-    HotPixelFile = new TFile(m_hotPixelFileName.c_str(), "READ");
-    h2HotPixelMap = static_cast<TH2F *>(HotPixelFile->Get("h2HotPixelMap"));
+    m_hotPixelFile = std::make_unique<TFile>(m_hotPixelFileName.c_str(), "READ");
+    h2HotPixelMap = static_cast<TH2F *>(m_hotPixelFile->Get("h2HotPixelMap"));
   }
 
   Info("HotPixel_init", "End hot pixel map preparation, usage = %d and %d.",
@@ -2150,14 +2150,16 @@ void MimosaAnalysis::HotPixel_end(int eventsRead)
 
     else
     { // map generated
-      HotPixelFile = new TFile(m_hotPixelFileName.c_str(), "RECREATE");
-      h2HotPixelMap = (TH2F *)h2DgoodSeedPixel->Clone("h2HotPixelMap");
+      if (m_hotPixelFile)
+        m_hotPixelFile.reset();
+      m_hotPixelFile = std::make_unique<TFile>(m_hotPixelFileName.c_str(), "RECREATE");
+      h2HotPixelMap = static_cast<TH2F *>(h2DgoodSeedPixel->Clone("h2HotPixelMap"));
       h2HotPixelMap->Scale(1. / eventsRead);
       h2HotPixelMap->Write();
       cout << "-------- The HOT PIXEL MAP HAS BEEN FILLED !" << endl;
     }
 
-    HotPixelFile->Close();
+    m_hotPixelFile->Close();
   } // end if map used
 
   else
