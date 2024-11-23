@@ -1182,10 +1182,10 @@ void MimosaAnalysis::PrepareOnlineDisplay()
   // green-track",200,10,300,350); MissedHit->Draw();
   MainCanvas->cd();
 
-  Char_t GlobalTitle[50];
-  sprintf(GlobalTitle, "Run %d Plane %d Gain: %f", RunNumber, ThePlaneNumber,
-          calibration);
-  TPaveLabel *gt = new TPaveLabel(0.01, 0.94, 0.2, 0.9999, GlobalTitle);
+  std::stringstream ssGlobalTitle;
+
+  ssGlobalTitle << "Run " << RunNumber << " Plane " << ThePlaneNumber << " Gain: " << calibration;
+  TPaveLabel *gt = new TPaveLabel(0.01, 0.94, 0.2, 0.9999, ssGlobalTitle.str().c_str());
   gt->Draw();
 
   Info("MimosaAnalysis", "Display prepared");
