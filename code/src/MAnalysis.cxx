@@ -1178,8 +1178,6 @@ void MimosaAnalysis::PrepareOnlineDisplay()
   gStyle->SetPalette(1);
   MainCanvas = new TCanvas("MainCanvas", "Main display", 550, 10, 750, 550);
   MainCanvas->Draw();
-  // TCanvas *MissedHit = new TCanvas("MissedHit","Missed Hits: red-cluster,
-  // green-track",200,10,300,350); MissedHit->Draw();
   MainCanvas->cd();
 
   std::stringstream ssGlobalTitle;
@@ -2093,15 +2091,15 @@ void MimosaAnalysis::HotPixel_init(int useMap)
     CUT_MinHitRatePerPixel =
         0.; // you can also remove pixels with low occupancy for testing
   }
+  std::stringstream ssHotPixelFileName;
+  ssHotPixelFileName << "hotPixelMap_run" << RunNumber << "_pl" << ThePlaneNumber << ".root";
+  m_hotPixelFileName = fTool.LocalizeDirName(ssHotPixelFileName.str().c_str());
+  std::filesystem::current_path(CreateGlobalResultDir());
 
-  sprintf(HotPixelFileName, "hotPixelMap_run%d_pl%d.root", RunNumber,
-          ThePlaneNumber);
-  sprintf(HotPixelFileName, "%s", fTool.LocalizeDirName(HotPixelFileName));
-  gSystem->cd(CreateGlobalResultDir().c_str());
-
+  // If pixel map should be used and read, load the file and the histogram
   if (TheUsePixelMap && Option_read_Pixel_map == 1)
   {
-    HotPixelFile = new TFile(HotPixelFileName, "READ");
+    HotPixelFile = new TFile(m_hotPixelFileName.c_str(), "READ");
     h2HotPixelMap = (TH2F *)HotPixelFile->Get("h2HotPixelMap");
   }
 
@@ -2152,7 +2150,7 @@ void MimosaAnalysis::HotPixel_end(int eventsRead)
 
     else
     { // map generated
-      HotPixelFile = new TFile(HotPixelFileName, "RECREATE");
+      HotPixelFile = new TFile(m_hotPixelFileName.c_str(), "RECREATE");
       h2HotPixelMap = (TH2F *)h2DgoodSeedPixel->Clone("h2HotPixelMap");
       h2HotPixelMap->Scale(1. / eventsRead);
       h2HotPixelMap->Write();
