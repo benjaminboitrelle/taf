@@ -93,7 +93,7 @@ MRaw *MimosaAnalysis::GetRaw()
 
   if (!CheckIfDone("init"))
     return 0;
-  return MRaw::InstanceRaw(fSession); // JB 2011/07/21 to pass session pointer
+  return MRaw::InstanceRaw(fSession.get()); // JB 2011/07/21 to pass session pointer
 }
 
 MRax *MimosaAnalysis::GetRax()
@@ -102,7 +102,7 @@ MRax *MimosaAnalysis::GetRax()
   //  VR 2014/06/29
   if (!CheckIfDone("init"))
     return 0;
-  return MRax::InstanceRax(fSession);
+  return MRax::InstanceRax(fSession.get());
 }
 
 //______________________________________________________________________________
@@ -170,10 +170,7 @@ MimosaAnalysis::MimosaAnalysis()
   // Cuts for hit rate per pixels are initially set to zero,
   // they are re-initialized later with the HotPixel_init() or
   // SetCut_Max/MinHitRatePerPixel() methods
-  CUT_MaxHitRatePerPixel = 0.; // cdritsa: set to 5; if the pixel is a seed too
-                               // many times in the run, remove the hit.
-  CUT_MinHitRatePerPixel =
-      0.; // you can also remove pixels with low occupancy for testing
+  CUT_hitRatePerPixel = {0.f, 0.f};
 
   if (fgInstance)
     Warning("MimosaAnalysis", "object already instantiated");
@@ -1524,46 +1521,40 @@ void MimosaAnalysis::GetMiEta()
     Etatree = (TTree *)theCorFile->Get("TreeEta");
     int nEtatreeentries = (int)Etatree->GetEntries();
 
-    float n_EtaU;
-    float n_EtaV;
+    auto n_Eta = SensorCoord2D<float>{0.f, 0.f};
     READnListe_CoG = nEtatreeentries;
     //   cout<<"nEtatreeentries "<<nEtatreeentries<<" "<<READnListe_CoG<<endl;
-    Etatree->SetBranchAddress("n_EtaU", &n_EtaU);
-    Etatree->SetBranchAddress("n_EtaV", &n_EtaV);
+    Etatree->SetBranchAddress("n_EtaU", &n_Eta.u);
+    Etatree->SetBranchAddress("n_EtaV", &n_Eta.v);
 
     //---etaab debut  GetMiEta() read tree
-    float n_Eta2x2U;
-    float n_Eta2x2V;
-    float n_Eta5x5U;
-    float n_Eta5x5V;
-    //  cout<<" TEST GET BRANCH 1"<<endl;
+    auto n_Eta2x2 = SensorCoord2D<float>{0.f, 0.f};
+    auto n_Eta5x5 = SensorCoord2D<float>{0.f, 0.f};
     if (Etatree->GetBranch("n_Eta2x2U"))
     {
-      // cout<<" TEST GET BRANCH 2"<<endl;
-      Etatree->SetBranchAddress("n_Eta2x2U", &n_Eta2x2U);
-      // cout<<" TEST GET BRANCH 3"<<endl;
+      Etatree->SetBranchAddress("n_Eta2x2U", &n_Eta2x2.u);
     }
     if (Etatree->GetBranch("n_Eta2x2V"))
     {
-      Etatree->SetBranchAddress("n_Eta2x2V", &n_Eta2x2V);
+      Etatree->SetBranchAddress("n_Eta2x2V", &n_Eta2x2.v);
     }
     if (Etatree->GetBranch("n_Eta5x5U"))
     {
-      Etatree->SetBranchAddress("n_Eta5x5U", &n_Eta5x5U);
+      Etatree->SetBranchAddress("n_Eta5x5U", &n_Eta5x5.u);
     }
     if (Etatree->GetBranch("n_Eta5x5V"))
     {
-      Etatree->SetBranchAddress("n_Eta5x5V", &n_Eta5x5V);
+      Etatree->SetBranchAddress("n_Eta5x5V", &n_Eta5x5.v);
     }
     for (int i = 0; i < READnListe_CoG; i++)
     {
       Etatree->GetEntry(i);
       READListe_CoGU.Set(i + 1);
       READListe_CoGV.Set(i + 1);
-      READListe_CoGU[i] = n_EtaU;
-      READListe_CoGV[i] = n_EtaV;
-      READListe_CoGU.AddAt(n_EtaU, i);
-      READListe_CoGV.AddAt(n_EtaV, i);
+      READListe_CoGU[i] = n_Eta.u;
+      READListe_CoGV[i] = n_Eta.v;
+      READListe_CoGU.AddAt(n_Eta.u, i);
+      READListe_CoGV.AddAt(n_Eta.v, i);
     }
     READnListe_CoG_eta2x2 = nEtatreeentries;
     for (int i = 0; i < READnListe_CoG_eta2x2; i++)
@@ -1571,10 +1562,10 @@ void MimosaAnalysis::GetMiEta()
       Etatree->GetEntry(i);
       READListe_CoGU_eta2x2.Set(i + 1);
       READListe_CoGV_eta2x2.Set(i + 1);
-      READListe_CoGU_eta2x2[i] = n_Eta2x2U;
-      READListe_CoGV_eta2x2[i] = n_Eta2x2V;
-      READListe_CoGU_eta2x2.AddAt(n_Eta2x2U, i);
-      READListe_CoGV_eta2x2.AddAt(n_Eta2x2V, i);
+      READListe_CoGU_eta2x2[i] = n_Eta2x2.u;
+      READListe_CoGV_eta2x2[i] = n_Eta2x2.v;
+      READListe_CoGU_eta2x2.AddAt(n_Eta2x2.u, i);
+      READListe_CoGV_eta2x2.AddAt(n_Eta2x2.v, i);
     }
     READnListe_CoG_eta5x5 = nEtatreeentries;
     for (int i = 0; i < READnListe_CoG_eta5x5; i++)
@@ -1582,10 +1573,10 @@ void MimosaAnalysis::GetMiEta()
       Etatree->GetEntry(i);
       READListe_CoGU_eta5x5.Set(i + 1);
       READListe_CoGV_eta5x5.Set(i + 1);
-      READListe_CoGU_eta5x5[i] = n_Eta5x5U;
-      READListe_CoGV_eta5x5[i] = n_Eta5x5V;
-      READListe_CoGU_eta5x5.AddAt(n_Eta5x5U, i);
-      READListe_CoGV_eta5x5.AddAt(n_Eta5x5V, i);
+      READListe_CoGU_eta5x5[i] = n_Eta5x5.u;
+      READListe_CoGV_eta5x5[i] = n_Eta5x5.v;
+      READListe_CoGU_eta5x5.AddAt(n_Eta5x5.u, i);
+      READListe_CoGV_eta5x5.AddAt(n_Eta5x5.v, i);
     }
     //---etaab fin GetMiEta()
     /*   cout<<"READListe"<<endl;
@@ -2077,12 +2068,12 @@ void MimosaAnalysis::HotPixel_init(int useMap)
   Option_read_Pixel_map = (useMap == 1);
 
   // Initialize the cut-off values if they haven't been set previously
-  if (CUT_MaxHitRatePerPixel < 1.e-3)
+  if (CUT_hitRatePerPixel.max < 1.e-3f)
   {
     // Set hardcoded values if not initialized
 
-    CUT_MaxHitRatePerPixel = 0.05; // Max hit rate per pixel (remove hit if exceeded)
-    CUT_MinHitRatePerPixel = 0.;   // Min hit rate per pixel (allow for testing low occupancy pixels)
+    CUT_hitRatePerPixel.max = 0.05f; // Max hit rate per pixel (remove hit if exceeded)
+    CUT_hitRatePerPixel.min = 0.f;   // Min hit rate per pixel (allow for testing low occupancy pixels)
   }
   std::stringstream ssHotPixelFileName;
   ssHotPixelFileName << "hotPixelMap_run" << RunNumber << "_pl" << ThePlaneNumber << ".root";
@@ -2105,8 +2096,8 @@ void MimosaAnalysis::HotPixel_init(int useMap)
 int MimosaAnalysis::HotPixel_test(int aPixelIndex)
 {
   // Check if the pixel is considered "hot" based on the pixel map.
-  // A pixel is "hot" if its hit rate exceeds a maximum threshold (CUT_MaxHitRatePerPixel)
-  // or falls below a minimum threshold (CUT_MinHitRatePerPixel).
+  // A pixel is "hot" if its hit rate exceeds a maximum threshold (CUT_hitRatePerPixel.max)
+  // or falls below a minimum threshold (CUT_hitRatePerPixel.min).
   // The function only evaluates this if pixel map usage is enabled (TheUsePixelMap == 1)
   // and if the pixel map is available for reading (Option_read_Pixel_map == 1).
 
@@ -2118,8 +2109,8 @@ int MimosaAnalysis::HotPixel_test(int aPixelIndex)
   const auto iRow = aPixelIndex % NofPixelInRaw + 1;
   const auto iCol = aPixelIndex / NofPixelInRaw + 1;
   if (TheUsePixelMap == 1 && Option_read_Pixel_map == 1 &&
-      (h2HotPixelMap->GetBinContent(iRow, iCol) > CUT_MaxHitRatePerPixel ||
-       h2HotPixelMap->GetBinContent(iRow, iCol) < CUT_MinHitRatePerPixel))
+      (h2HotPixelMap->GetBinContent(iRow, iCol) > CUT_hitRatePerPixel.max ||
+       h2HotPixelMap->GetBinContent(iRow, iCol) < CUT_hitRatePerPixel.min))
   {
     return 1;
   }
@@ -2143,7 +2134,7 @@ void MimosaAnalysis::HotPixel_end(int eventsRead)
     if (Option_read_Pixel_map == 1)
     { // map only read
       cout << "-------- The HOT PIXEL MAP HAS BEEN READ ! KEEP "
-           << CUT_MinHitRatePerPixel << " < rate < " << CUT_MaxHitRatePerPixel
+           << CUT_hitRatePerPixel.min << " < rate < " << CUT_hitRatePerPixel.max
            << "." << endl;
     }
 
@@ -4038,7 +4029,7 @@ void MimosaAnalysis::ClusterPosition_eta(DAuthenticHit *thehit)
   //  cout << "iBin2x2 = " << iBin2x2 << endl;
   UofHitEta2x2 = Contents2x2U[iBin2x2] * PixelSizeU - PixelSizeU / 2. +
                  UofPix2x2[IndexOfCluster2x2] / 2. + hUdigital;
-  //  cout << "UEta2x2 = " << UofHitEta2x2 << "tu=" << tu << endl;
+  //  cout << "UEta2x2 = " << UofHitEta2x2 << "tu=" << track_position_sensor.u << endl;
   iBin2x2 = 0;
   while (Eta2x2V > Edges2x2[iBin2x2] && iBin2x2 < NBins2x2 - 1)
   {
@@ -4342,7 +4333,7 @@ void MimosaAnalysis::ClusterPosition_cog(DAuthenticHit *thehit)
       // finalPos=(%.1f,%.1f)\n", i, qonly[i], UofPix[i], VofPix[i],
       // TotalCharge, UofHitCG5, VofHitCG5);
     }
-    // printf("track pos=(%.1f,%.1f)\n", tu, tv);
+    // printf("track pos=(%.1f,%.1f)\n", track_position_sensor.u, tv);
   }
   if (MimoDebug > 1)
     printf("ClusterPosition_cog: CG = %.1f, %.1f\n", UofHitCG, VofHitCG);
@@ -4446,7 +4437,7 @@ void MimosaAnalysis::ClusterPosition_aht(DAuthenticHit *thehit)
   if (MimoDebug > 2)
     printf(" pixLR %2d-%2d, pixBT  %2d-%2d, (u,v) = (%.1f, %.1f), du=%.1f, "
            "dv=%.1f\n",
-           iLeft, iRight, iBottom, iTop, Uaht, Vaht, Uaht - tu, Vaht - tv);
+           iLeft, iRight, iBottom, iTop, Uaht, Vaht, Uaht - track_position_sensor.u, Vaht - tv);
 }
 
 //_____________________________________________________________________________
@@ -4604,18 +4595,18 @@ void MimosaAnalysis::TrackHitPosition_fill(DAuthenticHit *thehit,
   //-- resolution study
 
   // Digital from TTree
-  hAllHuvsAllTu1->Fill(tu - thehit->Hsu);
-  hAllHvvsAllTv1->Fill(tv - thehit->Hsv);
-  hAllHuvsAllTu2->Fill(tu - hUdigital); // never drawn !!!
-  hAllHvvsAllTv2->Fill(tv - hVdigital);
+  hAllHuvsAllTu1->Fill(track_position_sensor.u - thehit->Hsu);
+  hAllHvvsAllTv1->Fill(track_position_sensor.v - thehit->Hsv);
+  hAllHuvsAllTu2->Fill(track_position_sensor.u - hUdigital); // never drawn !!!
+  hAllHvvsAllTv2->Fill(track_position_sensor.v - hVdigital);
 
   // CG from TTree, JB 2009/09/07
-  huCGtu1->Fill(tu - thehit->HuCG);
-  hvCGtv1->Fill(tv - thehit->HvCG);
+  huCGtu1->Fill(track_position_sensor.u - thehit->HuCG);
+  hvCGtv1->Fill(track_position_sensor.v - thehit->HvCG);
 
-  double u = (tu + 0.5 * NofPixelInRaw * PixelSizeU) / (2.0 * PixelSizeU);
+  double u = (track_position_sensor.u + 0.5 * NofPixelInRaw * PixelSizeU) / (2.0 * PixelSizeU);
   u = (u - int(u)) * 2.0 * PixelSizeU;
-  double v = (tv + 0.5 * NofPixelInColumn * PixelSizeV) / (2.0 * PixelSizeV);
+  double v = (track_position_sensor.v + 0.5 * NofPixelInColumn * PixelSizeV) / (2.0 * PixelSizeV);
   v = (v - int(v)) * 2.0 * PixelSizeV;
 
   if (thehit->HNNS < huCGwidth_vs_Mult->GetXaxis()->GetNbins())
@@ -4625,12 +4616,12 @@ void MimosaAnalysis::TrackHitPosition_fill(DAuthenticHit *thehit,
     {
       if (thehit->HNNS == imult + 1)
       {
-        huCGtu1_vs_Mult[imult]->Fill(tu - thehit->HuCG);
-        hvCGtv1_vs_Mult[imult]->Fill(tv - thehit->HvCG);
+        huCGtu1_vs_Mult[imult]->Fill(track_position_sensor.u - thehit->HuCG);
+        hvCGtv1_vs_Mult[imult]->Fill(track_position_sensor.v - thehit->HvCG);
 
-        // double u = (tu + 0.5*NofPixelInRaw    * PixelSizeU)/(2.0*PixelSizeU);
+        // double u = (track_position_sensor.u + 0.5*NofPixelInRaw    * PixelSizeU)/(2.0*PixelSizeU);
         // u = (u - int(u))*2.0*PixelSizeU;
-        // double v = (tv + 0.5*NofPixelInColumn * PixelSizeV)/(2.0*PixelSizeV);
+        // double v = (track_position_sensor.v + 0.5*NofPixelInColumn * PixelSizeV)/(2.0*PixelSizeV);
         // v = (v - int(v))*2.0*PixelSizeV;
         huvCGtuv_vs_Mult[imult]->Fill(u, v);
         break;
@@ -4640,13 +4631,13 @@ void MimosaAnalysis::TrackHitPosition_fill(DAuthenticHit *thehit,
   else
   {
     huCGtu1_vs_Mult[huCGwidth_vs_Mult->GetXaxis()->GetNbins() - 1]->Fill(
-        tu - thehit->HuCG);
+        track_position_sensor.u - thehit->HuCG);
     hvCGtv1_vs_Mult[huCGwidth_vs_Mult->GetXaxis()->GetNbins() - 1]->Fill(
-        tv - thehit->HvCG);
+        track_position_sensor.u - thehit->HvCG);
 
-    // double u = (tu + 0.5*NofPixelInRaw    * PixelSizeU)/(2.0*PixelSizeU);
+    // double u = (track_position_sensor.u + 0.5*NofPixelInRaw    * PixelSizeU)/(2.0*PixelSizeU);
     // u = (u - int(u))*2.0*PixelSizeU;
-    // double v = (tv + 0.5*NofPixelInColumn * PixelSizeV)/(2.0*PixelSizeV);
+    // double v = (track_position_sensor.v + 0.5*NofPixelInColumn * PixelSizeV)/(2.0*PixelSizeV);
     // v = (v - int(v))*2.0*PixelSizeV;
     huvCGtuv_vs_Mult[huCGwidth_vs_Mult->GetXaxis()->GetNbins() - 1]->Fill(u, v);
   }
@@ -4658,57 +4649,57 @@ void MimosaAnalysis::TrackHitPosition_fill(DAuthenticHit *thehit,
       idx_TrksInSensorPerEvt <=
           hnTracksInGeomatrixVsTrackPerEvent->GetXaxis()->GetNbins() - 1)
   {
-    huCGtu1_vs_TracksPerEvent[idx_TrksInSensorPerEvt]->Fill(tu - thehit->HuCG);
-    hvCGtv1_vs_TracksPerEvent[idx_TrksInSensorPerEvt]->Fill(tv - thehit->HvCG);
+    huCGtu1_vs_TracksPerEvent[idx_TrksInSensorPerEvt]->Fill(track_position_sensor.u - thehit->HuCG);
+    hvCGtv1_vs_TracksPerEvent[idx_TrksInSensorPerEvt]->Fill(track_position_sensor.v - thehit->HvCG);
   }
 
   // CG full cluster
-  huCGtu2->Fill(tu - UofHitCG);
-  hvCGtv2->Fill(tv - VofHitCG); // correction tv-UCG, 2011/10/06
+  huCGtu2->Fill(track_position_sensor.u - UofHitCG);
+  hvCGtv2->Fill(track_position_sensor.v - VofHitCG); // correction tv-UCG, 2011/10/06
 
   // CG 2x2 sub-cluster
-  hCG2x2tu1->Fill(tu - UCG2x2);
-  hCG2x2tv1->Fill(tv - VCG2x2);
+  hCG2x2tu1->Fill(track_position_sensor.u - UCG2x2);
+  hCG2x2tv1->Fill(track_position_sensor.v - VCG2x2);
 
   // CG 5x5 sub-cluster
-  hCG5URes->Fill(tu - UofHitCG5);
-  hCG5VRes->Fill(tv - VofHitCG5);
+  hCG5URes->Fill(track_position_sensor.u - UofHitCG5);
+  hCG5VRes->Fill(track_position_sensor.v - VofHitCG5);
 
   // CG corrected(?)
-  hTuHuCorr->Fill(tu - UCGcorr);
-  hTvHvCorr->Fill(tv - VCGcorr);
+  hTuHuCorr->Fill(track_position_sensor.u - UCGcorr);
+  hTvHvCorr->Fill(track_position_sensor.v - VCGcorr);
 
   // Eta from TTree
-  hEtaURes->Fill(tu - thehit->HuEta);
-  hEtaVRes->Fill(tv - thehit->HvEta);
+  hEtaURes->Fill(track_position_sensor.u - thehit->HuEta);
+  hEtaVRes->Fill(track_position_sensor.v - thehit->HvEta);
 
   // Eta 2x2
-  hEta2x2tu1->Fill(tu - UofHitEta2x2);
-  hEta2x2tv1->Fill(tv - VofHitEta2x2);
+  hEta2x2tu1->Fill(track_position_sensor.u - UofHitEta2x2);
+  hEta2x2tv1->Fill(track_position_sensor.v - VofHitEta2x2);
 
   // Eta 2x2_newR
-  hEtaU_2x2Res->Fill(tu - UofHitEta2x2_newR);
-  hEtaV_2x2Res->Fill(tv - VofHitEta2x2_newR);
+  hEtaU_2x2Res->Fill(track_position_sensor.u - UofHitEta2x2_newR);
+  hEtaV_2x2Res->Fill(track_position_sensor.v - VofHitEta2x2_newR);
 
   // Eta 5x5_newR
-  hEtaU_5x5Res->Fill(tu - UofHitEta5x5_newR);
-  hEtaV_5x5Res->Fill(tv - VofHitEta5x5_newR);
+  hEtaU_5x5Res->Fill(track_position_sensor.u - UofHitEta5x5_newR);
+  hEtaV_5x5Res->Fill(track_position_sensor.v - VofHitEta5x5_newR);
 
   // Eta3
-  hEta3URes->Fill(tu - UofHitEta3);
-  hEta3VRes->Fill(tv - VofHitEta3);
+  hEta3URes->Fill(track_position_sensor.u - UofHitEta3);
+  hEta3VRes->Fill(track_position_sensor.v - VofHitEta3);
 
   // AHT
-  hAHTURes->Fill(tu - Uaht);
-  hAHTVRes->Fill(tv - Vaht);
+  hAHTURes->Fill(track_position_sensor.u - Uaht);
+  hAHTVRes->Fill(track_position_sensor.v - Vaht);
 
   //------------------------
   //-- Track to hit distance study
 
   DuvCG->Fill(TrackToHitDistance);
   hdistchi2->Fill(chi2, TrackToHitDistance);
-  float adist2 = sqrt((hUdigital - tu) * (hUdigital - tu) +
-                      (hVdigital - tv) * (hVdigital - tv));
+  float adist2 = sqrt((hUdigital - track_position_sensor.u) * (hUdigital - track_position_sensor.u) +
+                      (hVdigital - track_position_sensor.v) * (hVdigital - track_position_sensor.v));
   htmp5->Fill(adist2);
 
   //------------------------
@@ -4720,62 +4711,62 @@ void MimosaAnalysis::TrackHitPosition_fill(DAuthenticHit *thehit,
   //------------------------
   //-- Alignment
 
-  hAlignHuTuvsTv->Fill(tv, tu - thehit->Hu);
-  hAlignHvTvvsTu->Fill(tu, tv - thehit->Hv);
-  hAlignHuTuvsTu->Fill(tu, tu - thehit->Hu); // JB 2013/07/16
-  hAlignHvTvvsTv->Fill(tv, tv - thehit->Hv);
-  hAlignHuTuvsHv->Fill(thehit->Hv, tu - thehit->Hu);
-  hAlignHvTvvsHu->Fill(thehit->Hu, tv - thehit->Hv);
-  hAlignHuTu->Fill(tu - thehit->Hu);
-  hAlignHvTv->Fill(tv - thehit->Hv);
+  hAlignHuTuvsTv->Fill(track_position_sensor.v, track_position_sensor.u - thehit->Hu);
+  hAlignHvTvvsTu->Fill(track_position_sensor.u, track_position_sensor.v - thehit->Hv);
+  hAlignHuTuvsTu->Fill(track_position_sensor.u, track_position_sensor.u - thehit->Hu); // JB 2013/07/16
+  hAlignHvTvvsTv->Fill(track_position_sensor.v, track_position_sensor.v - thehit->Hv);
+  hAlignHuTuvsHv->Fill(thehit->Hv, track_position_sensor.u - thehit->Hu);
+  hAlignHvTvvsHu->Fill(thehit->Hu, track_position_sensor.v - thehit->Hv);
+  hAlignHuTu->Fill(track_position_sensor.u - thehit->Hu);
+  hAlignHvTv->Fill(track_position_sensor.v - thehit->Hv);
 
   //------------------------
   //-- Correlation study
 
-  vec->Fill(tu - hUdigital, tv - hVdigital);
-  tudv->Fill(tu, tv - hVdigital);
-  tvdu->Fill(tv, tu - hUdigital);
-  hudv->Fill(hUdigital, tv - hVdigital);
-  hvdu->Fill(hVdigital, tu - hUdigital);
+  vec->Fill(track_position_sensor.u - hUdigital, track_position_sensor.v - hVdigital);
+  tudv->Fill(track_position_sensor.u, track_position_sensor.v - hVdigital);
+  tvdu->Fill(track_position_sensor.v, track_position_sensor.u - hUdigital);
+  hudv->Fill(hUdigital, track_position_sensor.v - hVdigital);
+  hvdu->Fill(hVdigital, track_position_sensor.u - hUdigital);
 
-  tuhu->Fill(tu, hUdigital);
-  tuhu1->Fill(tu - hUdigital);
-  tvhv->Fill(tv, hVdigital);
-  tvhv1->Fill(tv - hVdigital);
-  tuhv->Fill(tu, hVdigital);
-  tvhu->Fill(tv, hUdigital);
+  tuhu->Fill(track_position_sensor.u, hUdigital);
+  tuhu1->Fill(track_position_sensor.u - hUdigital);
+  tvhv->Fill(track_position_sensor.v, hVdigital);
+  tvhv1->Fill(track_position_sensor.v - hVdigital);
+  tuhv->Fill(track_position_sensor.u, hVdigital);
+  tvhu->Fill(track_position_sensor.v, hUdigital);
 
-  hEta2x2tu2->Fill(UofHitEta2x2 - hUdigital, tu - hUdigital);
-  hEta2x2tv2->Fill(VofHitEta2x2 - hVdigital, tv - hVdigital);
+  hEta2x2tu2->Fill(UofHitEta2x2 - hUdigital, track_position_sensor.u - hUdigital);
+  hEta2x2tv2->Fill(VofHitEta2x2 - hVdigital, track_position_sensor.v - hVdigital);
 
-  huCGtu->Fill(UofHitCG, tu);
-  hvCGtv->Fill(VofHitCG, tv);
-  huCG5tu->Fill(UofHitCG5, tu);
-  hvCG5tv->Fill(VofHitCG5, tv);
+  huCGtu->Fill(UofHitCG, track_position_sensor.u);
+  hvCGtv->Fill(VofHitCG, track_position_sensor.v);
+  huCG5tu->Fill(UofHitCG5, track_position_sensor.u);
+  hvCG5tv->Fill(VofHitCG5, track_position_sensor.v);
 
   //   3x3 calculations:
   // Fill Profile of correlation plot:
-  huCGtuInPix5->Fill(UofHitCG5 - hUdigital, tu - hUdigital);
-  hvCGtvInPix5->Fill(VofHitCG5 - hVdigital, tv - hVdigital);
-  huCGtuInPix->Fill(UofHitCG - hUdigital, tu - hUdigital);
-  hvCGtvInPix->Fill(VofHitCG - hVdigital, tv - hVdigital);
-  ProfUCG->Fill(UofHitCG - hUdigital, tu - hUdigital, 1);
-  ProfVCG->Fill(VofHitCG - hVdigital, tv - hVdigital, 1);
-  ProfACGn->Fill(VofHitCG - hVdigital, tv - hVdigital, 1);
-  ProfACGn->Fill(UofHitCG - hUdigital, tu - hUdigital, 1);
+  huCGtuInPix5->Fill(UofHitCG5 - hUdigital, track_position_sensor.u - hUdigital);
+  hvCGtvInPix5->Fill(VofHitCG5 - hVdigital, track_position_sensor.v - hVdigital);
+  huCGtuInPix->Fill(UofHitCG - hUdigital, track_position_sensor.u - hUdigital);
+  hvCGtvInPix->Fill(VofHitCG - hVdigital, track_position_sensor.v - hVdigital);
+  ProfUCG->Fill(UofHitCG - hUdigital, track_position_sensor.u - hUdigital, 1);
+  ProfVCG->Fill(VofHitCG - hVdigital, track_position_sensor.v - hVdigital, 1);
+  ProfACGn->Fill(VofHitCG - hVdigital, track_position_sensor.v - hVdigital, 1);
+  ProfACGn->Fill(UofHitCG - hUdigital, track_position_sensor.u - hUdigital, 1);
 
-  hUeta3TuInPix->Fill(UofHitEta3 - hUdigital, tu - hUdigital);
-  hVeta3TvInPix->Fill(VofHitEta3 - hVdigital, tv - hVdigital);
+  hUeta3TuInPix->Fill(UofHitEta3 - hUdigital, track_position_sensor.u - hUdigital);
+  hVeta3TvInPix->Fill(VofHitEta3 - hVdigital, track_position_sensor.v - hVdigital);
 
-  hChargeVsPosition->Fill(tu - hUdigital, tv - hVdigital,
+  hChargeVsPosition->Fill(track_position_sensor.u - hUdigital, track_position_sensor.v - hVdigital,
                           Qof3x3[0] / TotalCharge3x3);
-  hChargeVsDistance->Fill(TMath::Sqrt((tu - hUdigital) * (tu - hUdigital) +
-                                      (tv - hVdigital) * (tv - hVdigital)),
+  hChargeVsDistance->Fill(TMath::Sqrt((track_position_sensor.u - hUdigital) * (track_position_sensor.u - hUdigital) +
+                                      (track_position_sensor.v - hVdigital) * (track_position_sensor.v - hVdigital)),
                           Qof3x3[0]); // clm 2013/07/16
-  hAllHitsInPixel->Fill(tu - hUdigital, tv - hVdigital, 1.);
-  hUcorTuInPix->Fill(UCGcorr - hUdigital, tu - hUdigital);
-  hVcorTvInPix->Fill(VCGcorr - hVdigital, tv - hVdigital);
-  hTHCorr2->Fill(tu - UCGcorr, tv - VCGcorr);
+  hAllHitsInPixel->Fill(track_position_sensor.u - hUdigital, track_position_sensor.v - hVdigital, 1.);
+  hUcorTuInPix->Fill(UCGcorr - hUdigital, track_position_sensor.u - hUdigital);
+  hVcorTvInPix->Fill(VCGcorr - hVdigital, track_position_sensor.v - hVdigital);
+  hTHCorr2->Fill(track_position_sensor.u - UCGcorr, track_position_sensor.v - VCGcorr);
 
   //---------------------------
   //-- Charge distribution:
@@ -4815,14 +4806,14 @@ void MimosaAnalysis::TrackHitPosition_fill(DAuthenticHit *thehit,
         }
         if (TotalCharge > 0.)
         {
-          hChargeIntegral1->Fill(uuu - tu, vvv - tv, Charge1 / TotalCharge);
-          hChargeNorm1->Fill(uuu - tu, vvv - tv);
-          hChargeIntegral2->Fill(-uuu + tu, vvv - tv, Charge2 / TotalCharge);
-          hChargeNorm2->Fill(-uuu + tu, vvv - tv);
-          hChargeIntegral3->Fill(uuu - tu, -vvv + tv, Charge3 / TotalCharge);
-          hChargeNorm3->Fill(uuu - tu, -vvv + tv);
-          hChargeIntegral4->Fill(-uuu + tu, -vvv + tv, Charge4 / TotalCharge);
-          hChargeNorm4->Fill(-uuu + tu, -vvv + tv);
+          hChargeIntegral1->Fill(uuu - track_position_sensor.u, vvv - track_position_sensor.v, Charge1 / TotalCharge);
+          hChargeNorm1->Fill(uuu - track_position_sensor.u, vvv - tv);
+          hChargeIntegral2->Fill(-uuu + track_position_sensor.u, vvv - track_position_sensor.v, Charge2 / TotalCharge);
+          hChargeNorm2->Fill(-uuu + track_position_sensor.u, vvv - tv);
+          hChargeIntegral3->Fill(uuu - track_position_sensor.u, -vvv + track_position_sensor.v, Charge3 / TotalCharge);
+          hChargeNorm3->Fill(uuu - track_position_sensor.u, -vvv + tv);
+          hChargeIntegral4->Fill(-uuu + track_position_sensor.u, -vvv + track_position_sensor.v, Charge4 / TotalCharge);
+          hChargeNorm4->Fill(-uuu + track_position_sensor.u, -vvv + tv);
         }
       }
     }
@@ -4831,13 +4822,13 @@ void MimosaAnalysis::TrackHitPosition_fill(DAuthenticHit *thehit,
   //------------------------
   //-- Pixel response homogeneity study
 
-  hHOM_tu_tv_modulo->Fill(tu - hUdigital, tv - hVdigital);
-  hHOM_ResU_tu->Fill(tu - hUdigital, tu - UofHitEta3);
-  hHOM_ResV_tv->Fill(tv - hVdigital, tv - VofHitEta3);
-  ProfHOM_ResU_tu->Fill(tu - hUdigital, tu - UofHitEta3, 1);
-  ProfHOM_ResV_tv->Fill(tv - hVdigital, tv - VofHitEta3, 1);
-  float diodedist = sqrt((tu - hUdigital) * (tu - hUdigital) +
-                         (tv - hVdigital) * (tv - hVdigital));
+  hHOM_tu_tv_modulo->Fill(track_position_sensor.u - hUdigital, track_position_sensor.v - hVdigital);
+  hHOM_ResU_tu->Fill(track_position_sensor.u - hUdigital, track_position_sensor.u - UofHitEta3);
+  hHOM_ResV_tv->Fill(track_position_sensor.v - hVdigital, track_position_sensor.v - VofHitEta3);
+  ProfHOM_ResU_tu->Fill(track_position_sensor.u - hUdigital, track_position_sensor.u - UofHitEta3, 1);
+  ProfHOM_ResV_tv->Fill(track_position_sensor.v - hVdigital, track_position_sensor.v - VofHitEta3, 1);
+  float diodedist = sqrt((track_position_sensor.u - hUdigital) * (track_position_sensor.u - hUdigital) +
+                         (track_position_sensor.v - hVdigital) * (track_position_sensor.v - hVdigital));
   hHOM_Charge_diodedist->Fill(diodedist, qonly[0]);
   ProfHOM_Charge_diodedist->Fill(diodedist, qonly[0], 1);
 
@@ -4853,7 +4844,7 @@ void MimosaAnalysis::TrackHitPosition_fill(DAuthenticHit *thehit,
   { // NofPixelsInCluster
     // printf("  pix %d, q=%.0f, lin %.1f, col %.1f, tu-tv=%.0f-%.0f,
     // hu-hv=%.0f-%.0f, pitch=%.1f, diodedist(u-v)=%.1f-%.1f\n", iPix,
-    // qonly[iPix], LineInCluster[iPix], ColumnInCluster[iPix], tu, tv,
+    // qonly[iPix], LineInCluster[iPix], ColumnInCluster[iPix], track_position_sensor.u, track_position_sensor.v,
     // hUdigital, hVdigital, PixelSizeU,
     // tu-hUdigital-ColumnInCluster[iPix]*PixelSizeV,
     // tv-hVdigital-LineInCluster[iPix]*PixelSizeV);
@@ -4862,44 +4853,44 @@ void MimosaAnalysis::TrackHitPosition_fill(DAuthenticHit *thehit,
 
     // ProfHOM_Charge_diodedist_alg->Fill(tu-hUdigital-ColumnInCluster[iPix]*PixelSizeU,qonly[iPix],1);
     ProfHOM_Charge_diodedist_alg->Fill(
-        sqrt(pow(tu - hUdigital - ColumnInCluster[iPix] * PixelSizeU, 2) +
-             pow(tv - hVdigital - LineInCluster[iPix] * PixelSizeV, 2)),
+        sqrt(pow(track_position_sensor.u - hUdigital - ColumnInCluster[iPix] * PixelSizeU, 2) +
+             pow(track_position_sensor.v - hVdigital - LineInCluster[iPix] * PixelSizeV, 2)),
         qonly[iPix], 1);
-    ProfHOM_Charge_diodedist_alg_u->Fill(tu - hUdigital -
+    ProfHOM_Charge_diodedist_alg_u->Fill(track_position_sensor.u - hUdigital -
                                              ColumnInCluster[iPix] * PixelSizeU,
                                          qonly[iPix], 1); // clm
-    ProfHOM_Charge_diodedist_alg_v->Fill(tv - hVdigital -
+    ProfHOM_Charge_diodedist_alg_v->Fill(track_position_sensor.v - hVdigital -
                                              LineInCluster[iPix] * PixelSizeV,
                                          qonly[iPix], 1); // clm
 
     hHOM_Charge_diodedist_alg->Fill(
-        sqrt(pow(tu - hUdigital - ColumnInCluster[iPix] * PixelSizeU, 2) +
-             pow(tv - hVdigital - LineInCluster[iPix] * PixelSizeV, 2)),
+        sqrt(pow(track_position_sensor.u - hUdigital - ColumnInCluster[iPix] * PixelSizeU, 2) +
+             pow(track_position_sensor.v - hVdigital - LineInCluster[iPix] * PixelSizeV, 2)),
         qonly[iPix]);
-    hHOM_Charge_diodedist_alg_u->Fill(tu - hUdigital -
+    hHOM_Charge_diodedist_alg_u->Fill(track_position_sensor.u - hUdigital -
                                           ColumnInCluster[iPix] * PixelSizeU,
                                       qonly[iPix]); // clm
     hHOM_Charge_diodedist_alg_v->Fill(
-        tv - hVdigital - LineInCluster[iPix] * PixelSizeV, qonly[iPix]); // clm
+        track_position_sensor.v - hVdigital - LineInCluster[iPix] * PixelSizeV, qonly[iPix]); // clm
 
     // clm good
     //  ProfhGOODCharge_Charge_DiodePosition        ->Fill(tu-hUdigital-
     //  ColumnInCluster[iPix]*PixelSizeU,tv-hVdigital-LineInCluster[iPix]*PixelSizeV,qonly[iPix]/GOOD_The_Total_Charge);
     //  //clm clm test
     ProfhGOODCharge_Charge_DiodePosition->Fill(
-        tu - UofPix[iPix], tv - VofPix[iPix],
+        track_position_sensor.u - UofPix[iPix], track_position_sensor.v - VofPix[iPix],
         qonly[iPix] / GOOD_The_Total_Charge); // clm
 
     if (qonly[0] < 300)
       ProfhGOODCharge_Charge_DiodePositionSeedQLT300->Fill(
-          tu - hUdigital - ColumnInCluster[iPix] * PixelSizeU,
-          tv - hVdigital - LineInCluster[iPix] * PixelSizeV,
+          track_position_sensor.u - hUdigital - ColumnInCluster[iPix] * PixelSizeU,
+          track_position_sensor.v - hVdigital - LineInCluster[iPix] * PixelSizeV,
           qonly[iPix] / GOOD_The_Total_Charge); // clm
 
     if (qonly[0] > 2000)
       ProfhGOODCharge_Charge_DiodePositionSeedQGT2000->Fill(
-          tu - hUdigital - ColumnInCluster[iPix] * PixelSizeU,
-          tv - hVdigital - LineInCluster[iPix] * PixelSizeV,
+          track_position_sensor.u - hUdigital - ColumnInCluster[iPix] * PixelSizeU,
+          track_position_sensor.v - hVdigital - LineInCluster[iPix] * PixelSizeV,
           qonly[iPix] / GOOD_The_Total_Charge); // clm
 
     // clm calculate if the row/col is odd or even
@@ -4925,38 +4916,38 @@ void MimosaAnalysis::TrackHitPosition_fill(DAuthenticHit *thehit,
     //  all pixels
     if (mycol % 2 == 0 && mylin % 2 == 0)
       ProfhGOODCharge_Charge_DiodePosition_evencol_evenrow->Fill(
-          tu - UofPix[iPix], tv - VofPix[iPix],
+          track_position_sensor.u - UofPix[iPix], track_position_sensor.v - VofPix[iPix],
           qonly[iPix] / GOOD_The_Total_Charge); // clm
     if (mycol % 2 == 0 && mylin % 2 != 0)
       ProfhGOODCharge_Charge_DiodePosition_evencol_oddrow->Fill(
-          tu - UofPix[iPix], tv - VofPix[iPix],
+          track_position_sensor.u - UofPix[iPix], track_position_sensor.v - VofPix[iPix],
           qonly[iPix] / GOOD_The_Total_Charge); // clm
     if (mycol % 2 != 0 && mylin % 2 == 0)
       ProfhGOODCharge_Charge_DiodePosition_oddcol_evenrow->Fill(
-          tu - UofPix[iPix], tv - VofPix[iPix],
+          track_position_sensor.u - UofPix[iPix], track_position_sensor.v - VofPix[iPix],
           qonly[iPix] / GOOD_The_Total_Charge); // clm
     if (mycol % 2 != 0 && mylin % 2 != 0)
       ProfhGOODCharge_Charge_DiodePosition_oddcol_oddrow->Fill(
-          tu - UofPix[iPix], tv - VofPix[iPix],
+          track_position_sensor.u - UofPix[iPix], track_position_sensor.v - VofPix[iPix],
           qonly[iPix] / GOOD_The_Total_Charge); // clm
     // seed
     if (iPix == 0)
     {
       if (mycol % 2 == 0 && mylin % 2 == 0)
         ProfhGOODCharge_Charge_DiodePosition_evencol_evenrow_seed->Fill(
-            tu - UofPix[iPix], tv - VofPix[iPix],
+            track_position_sensor.u - UofPix[iPix], track_position_sensor.v - VofPix[iPix],
             qonly[iPix] / GOOD_The_Total_Charge); // clm
       if (mycol % 2 == 0 && mylin % 2 != 0)
         ProfhGOODCharge_Charge_DiodePosition_evencol_oddrow_seed->Fill(
-            tu - UofPix[iPix], tv - VofPix[iPix],
+            track_position_sensor.u - UofPix[iPix], track_position_sensor.v - VofPix[iPix],
             qonly[iPix] / GOOD_The_Total_Charge); // clm
       if (mycol % 2 != 0 && mylin % 2 == 0)
         ProfhGOODCharge_Charge_DiodePosition_oddcol_evenrow_seed->Fill(
-            tu - UofPix[iPix], tv - VofPix[iPix],
+            track_position_sensor.u - UofPix[iPix], track_position_sensor.v - VofPix[iPix],
             qonly[iPix] / GOOD_The_Total_Charge); // clm
       if (mycol % 2 != 0 && mylin % 2 != 0)
         ProfhGOODCharge_Charge_DiodePosition_oddcol_oddrow_seed->Fill(
-            tu - UofPix[iPix], tv - VofPix[iPix],
+            track_position_sensor.u - UofPix[iPix], track_position_sensor.v - VofPix[iPix],
             qonly[iPix] / GOOD_The_Total_Charge); // clm
     }
     // 1st crown
@@ -4965,19 +4956,19 @@ void MimosaAnalysis::TrackHitPosition_fill(DAuthenticHit *thehit,
     {
       if (mycol % 2 == 0 && mylin % 2 == 0)
         ProfhGOODCharge_Charge_DiodePosition_evencol_evenrow_1stcrown->Fill(
-            tu - UofPix[iPix], tv - VofPix[iPix],
+            track_position_sensor.u - UofPix[iPix], track_position_sensor.v - VofPix[iPix],
             qonly[iPix] / GOOD_The_Total_Charge); // clm
       if (mycol % 2 == 0 && mylin % 2 != 0)
         ProfhGOODCharge_Charge_DiodePosition_evencol_oddrow_1stcrown->Fill(
-            tu - UofPix[iPix], tv - VofPix[iPix],
+            track_position_sensor.u - UofPix[iPix], track_position_sensor.v - VofPix[iPix],
             qonly[iPix] / GOOD_The_Total_Charge); // clm
       if (mycol % 2 != 0 && mylin % 2 == 0)
         ProfhGOODCharge_Charge_DiodePosition_oddcol_evenrow_1stcrown->Fill(
-            tu - UofPix[iPix], tv - VofPix[iPix],
+            track_position_sensor.u - UofPix[iPix], track_position_sensor.v - VofPix[iPix],
             qonly[iPix] / GOOD_The_Total_Charge); // clm
       if (mycol % 2 != 0 && mylin % 2 != 0)
         ProfhGOODCharge_Charge_DiodePosition_oddcol_oddrow_1stcrown->Fill(
-            tu - UofPix[iPix], tv - VofPix[iPix],
+            track_position_sensor.u - UofPix[iPix], track_position_sensor.v - VofPix[iPix],
             qonly[iPix] / GOOD_The_Total_Charge); // clm
     }
     // 2nd crown
@@ -4986,43 +4977,43 @@ void MimosaAnalysis::TrackHitPosition_fill(DAuthenticHit *thehit,
     {
       if (mycol % 2 == 0 && mylin % 2 == 0)
         ProfhGOODCharge_Charge_DiodePosition_evencol_evenrow_2ndcrown->Fill(
-            tu - UofPix[iPix], tv - VofPix[iPix],
+            track_position_sensor.u - UofPix[iPix], track_position_sensor.v - VofPix[iPix],
             qonly[iPix] / GOOD_The_Total_Charge); // clm
       if (mycol % 2 == 0 && mylin % 2 != 0)
         ProfhGOODCharge_Charge_DiodePosition_evencol_oddrow_2ndcrown->Fill(
-            tu - UofPix[iPix], tv - VofPix[iPix],
+            track_position_sensor.u - UofPix[iPix], track_position_sensor.v - VofPix[iPix],
             qonly[iPix] / GOOD_The_Total_Charge); // clm
       if (mycol % 2 != 0 && mylin % 2 == 0)
         ProfhGOODCharge_Charge_DiodePosition_oddcol_evenrow_2ndcrown->Fill(
-            tu - UofPix[iPix], tv - VofPix[iPix],
+            track_position_sensor.u - UofPix[iPix], track_position_sensor.v - VofPix[iPix],
             qonly[iPix] / GOOD_The_Total_Charge); // clm
       if (mycol % 2 != 0 && mylin % 2 != 0)
         ProfhGOODCharge_Charge_DiodePosition_oddcol_oddrow_2ndcrown->Fill(
-            tu - UofPix[iPix], tv - VofPix[iPix],
+            track_position_sensor.u - UofPix[iPix], track_position_sensor.v - VofPix[iPix],
             qonly[iPix] / GOOD_The_Total_Charge); // clm
     }
 
     h2dCharge_Charge_DiodePosition_Track->Fill(
-        tu - hUdigital - ColumnInCluster[iPix] * PixelSizeU,
-        tv - hVdigital - LineInCluster[iPix] * PixelSizeV);
+        track_position_sensor.u - hUdigital - ColumnInCluster[iPix] * PixelSizeU,
+        track_position_sensor.v - hVdigital - LineInCluster[iPix] * PixelSizeV);
 
     h2dCharge_Charge_DiodePosition_CluSize->Fill(
-        tu - hUdigital - ColumnInCluster[iPix] * PixelSizeU,
-        tv - hVdigital - LineInCluster[iPix] * PixelSizeV, NofPixelsInCluster);
+        track_position_sensor.u - hUdigital - ColumnInCluster[iPix] * PixelSizeU,
+        track_position_sensor.v - hVdigital - LineInCluster[iPix] * PixelSizeV, NofPixelsInCluster);
 
     ProfhGOODCharge_Charge_DiodePositionSimpDist->Fill(
-        tu - hUdigital, tv - hVdigital,
+        track_position_sensor.u - hUdigital, track_position_sensor.v - hVdigital,
         qonly[iPix] / GOOD_The_Total_Charge); // clm
 
     hHOM_Charge_diodedist3D->Fill(
-        tu - hUdigital - ColumnInCluster[iPix] * PixelSizeU,
-        tv - hVdigital - LineInCluster[iPix] * PixelSizeV, qonly[iPix]); // clm
+        track_position_sensor.u - hUdigital - ColumnInCluster[iPix] * PixelSizeU,
+        track_position_sensor.v - hVdigital - LineInCluster[iPix] * PixelSizeV, qonly[iPix]); // clm
 
     //                if( tv-hVdigital>PixelSizeV ) {
     //                  printf("  far away pix %d, q=%.0f, lin %.0f, col %.0f,
     //                  tu-tv=%.0f-%.0f, hu-hv=%.0f-%.0f, pitch=%.1f,
     //                  diodedist(u-v)=%.1f-%.1f\n", iPix, qonly[iPix],
-    //                  LineInCluster[iPix], ColumnInCluster[iPix], tu, tv,
+    //                  LineInCluster[iPix], ColumnInCluster[iPix], track_position_sensor.u, track_position_sensor.v,
     //                  hUdigital, hVdigital, PixelSizeV,
     //                  tu-hUdigital-ColumnInCluster[iPix]*PixelSizeU,
     //                  tv-hVdigital-LineInCluster[iPix]*PixelSizeV);
@@ -5033,25 +5024,25 @@ void MimosaAnalysis::TrackHitPosition_fill(DAuthenticHit *thehit,
   {
     hHOM_Charge2_diodedist->Fill(diodedist, q[1]);
     ProfHOM_Charge2_diodedist->Fill(diodedist, q[1], 1);
-    hHOM_Charge2_diodedist3D->Fill(tu - hUdigital, tv - hVdigital, q[1]); // clm
+    hHOM_Charge2_diodedist3D->Fill(track_position_sensor.u - hUdigital, track_position_sensor.v - hVdigital, q[1]); // clm
   }
   if (NofPixelsInCluster > 3)
   {
     hHOM_Charge4_diodedist->Fill(diodedist, q[3]);
     ProfHOM_Charge4_diodedist->Fill(diodedist, q[3], 1);
-    hHOM_Charge4_diodedist3D->Fill(tu - hUdigital, tv - hVdigital, q[3]); // clm
+    hHOM_Charge4_diodedist3D->Fill(track_position_sensor.u - hUdigital, track_position_sensor.v - hVdigital, q[3]); // clm
   }
   if (NofPixelsInCluster > 8)
   {
     hHOM_Charge9_diodedist->Fill(diodedist, q[8]);
     ProfHOM_Charge9_diodedist->Fill(diodedist, q[8], 1);
-    hHOM_Charge9_diodedist3D->Fill(tu - hUdigital, tv - hVdigital, q[8]); // clm
+    hHOM_Charge9_diodedist3D->Fill(track_position_sensor.u - hUdigital, track_position_sensor.v - hVdigital, q[8]); // clm
   }
   if (NofPixelsInCluster > 24)
   {
     hHOM_Charge25_diodedist->Fill(diodedist, q[24]);
     ProfHOM_Charge25_diodedist->Fill(diodedist, q[24], 1);
-    hHOM_Charge25_diodedist3D->Fill(tu - hUdigital, tv - hVdigital,
+    hHOM_Charge25_diodedist3D->Fill(track_position_sensor.u - hUdigital, track_position_sensor.v - hVdigital,
                                     q[24]); // clm
   }
   hHOM_SNseed_diodedist->Fill(diodedist, snsnordered[0]);
@@ -5100,24 +5091,24 @@ void MimosaAnalysis::TrackHitPosition_fill(DAuthenticHit *thehit,
     hHOM_Charge_diodedist_90_inf->Fill(qonly[0]);
   }
 
-  hHOM_modUCG_modtu->Fill(tu - hUdigital, UofHitCG - hUdigital);
-  hHOM_modVCG_modtv->Fill(tv - hVdigital, VofHitCG - hVdigital);
-  hHOM_modUeta3_modtu->Fill(tu - hUdigital, UofHitEta3 - hUdigital);
-  hHOM_modVeta3_modtv->Fill(tv - hVdigital, VofHitEta3 - hVdigital);
-  hHOM_modUeta3_realtu->Fill(tu, UofHitEta3 - hUdigital);
-  hHOM_modVeta3_realtv->Fill(tv, VofHitEta3 - hVdigital);
-  hHOM_modUCG_realtu->Fill(tu, UofHitCG - hUdigital);
-  hHOM_modVCG_realtv->Fill(tv, VofHitCG - hVdigital);
+  hHOM_modUCG_modtu->Fill(track_position_sensor.u - hUdigital, UofHitCG - hUdigital);
+  hHOM_modVCG_modtv->Fill(track_position_sensor.v - hVdigital, VofHitCG - hVdigital);
+  hHOM_modUeta3_modtu->Fill(track_position_sensor.u - hUdigital, UofHitEta3 - hUdigital);
+  hHOM_modVeta3_modtv->Fill(track_position_sensor.v - hVdigital, VofHitEta3 - hVdigital);
+  hHOM_modUeta3_realtu->Fill(track_position_sensor.u, UofHitEta3 - hUdigital);
+  hHOM_modVeta3_realtv->Fill(track_position_sensor.v, VofHitEta3 - hVdigital);
+  hHOM_modUCG_realtu->Fill(track_position_sensor.u, UofHitCG - hUdigital);
+  hHOM_modVCG_realtv->Fill(track_position_sensor.v, VofHitCG - hVdigital);
   hHOM_modUeta3_Eta3U->Fill(UofHitEta3, UofHitEta3 - hUdigital);
   hHOM_modVeta3_Eta3V->Fill(VofHitEta3, VofHitEta3 - hVdigital);
   hHOM_modUeta3_modVeta3->Fill(VofHitEta3 - hVdigital, UofHitEta3 - hUdigital);
   hHOM_modUCG_modVCG->Fill(VofHitCG - hVdigital, UofHitCG - hUdigital);
   hHOM_modUeta3_modUCG->Fill(UofHitCG - hUdigital, UofHitEta3 - hUdigital);
   hHOM_modVeta3_modVCG->Fill(VofHitCG - hVdigital, VofHitEta3 - hVdigital);
-  hHOM_DU_Nevent->Fill(ievt, tu - UofHitEta3);
-  hHOM_DV_Nevent->Fill(ievt, tv - VofHitEta3);
-  hHOM_modtu_Nevent->Fill(ievt, tu - hUdigital);
-  hHOM_modtv_Nevent->Fill(ievt, tv - hVdigital);
+  hHOM_DU_Nevent->Fill(ievt, track_position_sensor.u - UofHitEta3);
+  hHOM_DV_Nevent->Fill(ievt, track_position_sensor.v - VofHitEta3);
+  hHOM_modtu_Nevent->Fill(ievt, track_position_sensor.u - hUdigital);
+  hHOM_modtv_Nevent->Fill(ievt, track_position_sensor.v - hVdigital);
   hHOM_modUCG_Nevent->Fill(ievt, UofHitCG - hUdigital);
   hHOM_modVCG_Nevent->Fill(ievt, VofHitCG - hVdigital);
 
@@ -5200,23 +5191,23 @@ void MimosaAnalysis::TrackParameters_compute(DTransparentPlane *atrack,
          atrack->Ttk);
 
   chi2 = atrack->Tchi2;
-  tdu = atrack->Tdu;
-  tdv = atrack->Tdv;
+  track_slope_sensor.u = atrack->Tdu;
+  track_slope_sensor.v = atrack->Tdv;
   tk1 = atrack->Tk1;
-  tx = atrack->Tx;
-  ty = atrack->Ty;
-  tz = atrack->Tz;
-  tdx = atrack->Tdx;
-  tdy = atrack->Tdy;
-  trackAngleXZ = (TMath::ATan(tdx)) * 180 / TMath::Pi(); // JB 2011/10/30
+  track_postion_telescope.x = atrack->Tx;
+  track_postion_telescope.y = atrack->Ty;
+  track_postion_telescope.z = atrack->Tz;
+  track_slope_telescope.x = atrack->Tdx;
+  track_slope_telescope.y = atrack->Tdy;
+  trackAngleXZ = (TMath::ATan(track_slope_telescope.x)) * 180 / TMath::Pi(); // JB 2011/10/30
   trackAngleYZ =
-      (TMath::ATan(tdy)) * 180 / TMath::Pi(); // moved here from MiniVector
+      (TMath::ATan(track_slope_telescope.y)) * 180 / TMath::Pi(); // moved here from MiniVector
 
   // -- correct track position in MIMOSA
   // from new alignment
   DataPoints myhit;
   DR3 TrackPos(0.0, 0.0, 0.0);
-  myhit.Set(0, 0, 0, 0, tx, ty, tz, tdx, tdy);
+  myhit.Set(0, 0, 0, 0, track_postion_telescope.x, track_postion_telescope.y, track_postion_telescope.z, track_slope_telescope.x, track_slope_telescope.y);
   // myhit.Print();
   align->CalculateIntersection(&myhit);
   // cout << " track in plane (Teles frame) " << align->GetTrackPosition()(0) <<
@@ -5225,16 +5216,16 @@ void MimosaAnalysis::TrackParameters_compute(DTransparentPlane *atrack,
   TrackPos = align->TransformTrackToPlane();
   // cout << " track in plane (Plane frame) " << TrackPos(0) << ", " <<
   // TrackPos(1) << ", " << TrackPos(2) << "." << endl;
-  tu = TrackPos(0);
-  tv = TrackPos(1);
+  track_position_sensor.u = TrackPos(0);
+  track_position_sensor.v = TrackPos(1);
 
   // Temporary fix, bypass CorPar File alignement JB 2009/08/25
-  // tu = atrack->Tu;
-  // tv = atrack->Tv;
+  // track_position_sensor.u = atrack->Tu;
+  // track_position_sensor.v = atrack->Tv;
 
   if (MimoDebug > 1)
     cout << " Old track pos = " << atrack->Tu << ";" << atrack->Tv
-         << " new track pos = " << tu << ";" << tv << endl;
+         << " new track pos = " << track_position_sensor.u << ";" << track_position_sensor.v << endl;
 }
 
 //_____________________________________________________________________________
@@ -5273,11 +5264,11 @@ void MimosaAnalysis::TrackParameters_goodFill(DTransparentPlane *atrack,
     Info("TrackParameters_goodfill", " Filling parameters for good track %d",
          atrack->Ttk);
 
-  hGoodChi2TvTu->Fill(tu, tv);
-  hGoodChi2Tu->Fill(tu);
-  hGoodChi2Tv->Fill(tv);
-  hGoodChi2Tx->Fill(tx);
-  hGoodChi2Ty->Fill(ty);
+  hGoodChi2TvTu->Fill(track_position_sensor.u, track_position_sensor.v);
+  hGoodChi2Tu->Fill(track_position_sensor.u);
+  hGoodChi2Tv->Fill(track_position_sensor.v);
+  hGoodChi2Tx->Fill(track_postion_telescope.x);
+  hGoodChi2Ty->Fill(track_postion_telescope.y);
 
   hGoodChi2AngleXZ->Fill(trackAngleXZ); // JB 2011/10/30
   hGoodChi2AngleYZ->Fill(trackAngleYZ);
@@ -5356,8 +5347,8 @@ void MimosaAnalysis::MiniVector_compute()
   vectorPosXYZ.SetValue(x, y, z);
 
   // --- compute track extrapolation in the middle point
-  trackMeanPosXYZ.SetValue(tx + tdx * vectorPosXYZ(2),
-                           ty + tdy * vectorPosXYZ(2), vectorPosXYZ(2));
+  trackMeanPosXYZ.SetValue(track_postion_telescope.x + track_slope_telescope.x * vectorPosXYZ(2),
+                           track_postion_telescope.y + track_slope_telescope.y * vectorPosXYZ(2), vectorPosXYZ(2));
 
   if (MimoDebug > 1)
   {
@@ -5382,7 +5373,7 @@ void MimosaAnalysis::MiniVector_compute()
          << trackMeanPosXYZ(1) << endl;
     cout << "Minivector Slope in XZ and YZ:" << endl;
     cout << "  minivector : " << vectorSlopeXZ << ", " << vectorSlopeYZ << endl;
-    cout << "  track      : " << tdx << ", " << tdy << endl;
+    cout << "  track      : " << track_slope_telescope.x << ", " << track_slope_telescope.y << endl;
     cout << "Minivector Angle in XZ and YZ (deg):" << endl;
     cout << "  minivector : " << vectorAngleXZ << ", " << vectorAngleYZ << endl;
     cout << "  track      : " << trackAngleXZ << ", " << trackAngleYZ << endl;
@@ -5850,57 +5841,57 @@ void MimosaAnalysis::GetParameters()
   // cut values
 
   // on hits
-  CUT_MaxNbOfHits = fSession->GetSetup()
-                        ->GetAnalysisPar()
-                        .MaxNbOfHits; // take 50 to clean picture //for Mimosa
-                                      // 5, 400 hits crashes.
-  CUT_MinNbOfHits = fSession->GetSetup()
-                        ->GetAnalysisPar()
-                        .MinNbOfHits; // for tests. put 0 by defaults.
+  CUT_LimitsNbOffHits.min = fSession->GetSetup()
+                                ->GetAnalysisPar()
+                                .MinNbOfHits;
+  CUT_LimitsNbOffHits.max = fSession->GetSetup()
+                                ->GetAnalysisPar()
+                                .MaxNbOfHits;
+
   MaxNofPixelsInCluster = fSession->GetSetup()
                               ->GetAnalysisPar()
                               .MaxNofPixelsInCluster[ThesubmatrixNumber];
   MinNofPixelsInCluster = fSession->GetSetup()
                               ->GetAnalysisPar()
                               .MinNofPixelsInCluster[ThesubmatrixNumber];
-  CUT_MinSeedIndex = fSession->GetSetup()
-                         ->GetAnalysisPar()
-                         .MinSeedIndex[ThesubmatrixNumber]; // JB 2013/08/21
-  CUT_MaxSeedIndex = fSession->GetSetup()
-                         ->GetAnalysisPar()
-                         .MaxSeedIndex[ThesubmatrixNumber]; // JB 2013/08/21
-  if (CUT_MinSeedIndex > CUT_MaxSeedIndex)
+  CUT_seedIndex.min = fSession->GetSetup()
+                          ->GetAnalysisPar()
+                          .MinSeedIndex[ThesubmatrixNumber]; // JB 2013/08/21
+  CUT_seedIndex.max = fSession->GetSetup()
+                          ->GetAnalysisPar()
+                          .MaxSeedIndex[ThesubmatrixNumber]; // JB 2013/08/21
+  if (CUT_seedIndex.min > CUT_seedIndex.max)
   {
     Warning("MimosaAnalysis::GetParameters",
             "Seed index range inconsistent, min=%d> max=%d --> both set to 0\n",
-            CUT_MinSeedIndex, CUT_MaxSeedIndex);
-    CUT_MinSeedIndex = CUT_MaxSeedIndex = 0;
+            CUT_seedIndex.min, CUT_seedIndex.max);
+    CUT_seedIndex.min = CUT_seedIndex.max = 0;
   }
-  CUT_MinSeedCol = fSession->GetSetup()
-                       ->GetAnalysisPar()
-                       .MinSeedCol[ThesubmatrixNumber]; // JB 2013/08/21
-  CUT_MaxSeedCol = fSession->GetSetup()
-                       ->GetAnalysisPar()
-                       .MaxSeedCol[ThesubmatrixNumber]; // JB 2013/08/21
-  if (CUT_MinSeedCol > CUT_MaxSeedCol)
+  CUT_seedCol.min = fSession->GetSetup()
+                        ->GetAnalysisPar()
+                        .MinSeedCol[ThesubmatrixNumber]; // JB 2013/08/21
+  CUT_seedCol.max = fSession->GetSetup()
+                        ->GetAnalysisPar()
+                        .MaxSeedCol[ThesubmatrixNumber]; // JB 2013/08/21
+  if (CUT_seedCol.min > CUT_seedCol.max)
   {
     Warning("MimosaAnalysis::GetParameters",
             "Seed col range inconsistent, min=%d> max=%d --> both set to 0\n",
-            CUT_MinSeedCol, CUT_MaxSeedCol);
-    CUT_MinSeedCol = CUT_MaxSeedCol = 0;
+            CUT_seedCol.min, CUT_seedCol.max);
+    CUT_seedCol.min = CUT_seedCol.max = 0;
   }
-  CUT_MinSeedRow = fSession->GetSetup()
-                       ->GetAnalysisPar()
-                       .MinSeedRow[ThesubmatrixNumber]; // JB 2013/08/21
-  CUT_MaxSeedRow = fSession->GetSetup()
-                       ->GetAnalysisPar()
-                       .MaxSeedRow[ThesubmatrixNumber]; // JB 2013/08/21
-  if (CUT_MinSeedRow > CUT_MaxSeedRow)
+  CUT_seedRow.min = fSession->GetSetup()
+                        ->GetAnalysisPar()
+                        .MinSeedRow[ThesubmatrixNumber]; // JB 2013/08/21
+  CUT_seedRow.max = fSession->GetSetup()
+                        ->GetAnalysisPar()
+                        .MaxSeedRow[ThesubmatrixNumber]; // JB 2013/08/21
+  if (CUT_seedRow.min > CUT_seedRow.max)
   {
     Warning("MimosaAnalysis::GetParameters",
             "Seed row range inconsistent, min=%d> max=%d --> both set to 0\n",
-            CUT_MinSeedRow, CUT_MaxSeedRow);
-    CUT_MinSeedRow = CUT_MaxSeedRow = 0;
+            CUT_seedRow.min, CUT_seedRow.max);
+    CUT_seedRow.min = CUT_seedRow.max = 0;
   }
   CUT_Q_seed = fSession->GetSetup()
                    ->GetAnalysisPar()
@@ -5908,7 +5899,7 @@ void MimosaAnalysis::GetParameters()
   CUT_Q_cluster = fSession->GetSetup()
                       ->GetAnalysisPar()
                       .MinClusterCharge[ThesubmatrixNumber]; // JB 2014/01/21
-  CUT_MinQ_neighbour =
+  CUT_Q_neighbour.min =
       fSession->GetSetup()
           ->GetAnalysisPar()
           .MinNeighbourCharge[ThesubmatrixNumber]; // JB 2013/11/08
@@ -5944,10 +5935,10 @@ void MimosaAnalysis::GetParameters()
                                                         [Thegeomatrix];
 
   cout << "----------- CUTS:" << endl;
-  cout << "  # hits (min, max): " << CUT_MinNbOfHits << " - " << CUT_MaxNbOfHits
+  cout << "  # hits (min, max): " << CUT_LimitsNbOffHits.min << " - " << CUT_LimitsNbOffHits.max
        << endl;
   cout << "  min charge on seed: " << CUT_Q_seed
-       << ", on neighbour: " << CUT_MinQ_neighbour
+       << ", on neighbour: " << CUT_Q_neighbour.min
        << ", on cluster: " << CUT_Q_cluster << endl;
   cout << "  min - max # pixels in a hit: " << MinNofPixelsInCluster << " - "
        << MaxNofPixelsInCluster << endl;
@@ -6289,11 +6280,11 @@ void MimosaAnalysis::ProjectionImaging_end(int numberOfHits)
 }
 //__________________________________________________________________________
 //
-float MimosaAnalysis::GetTrackDistantToClosestDiode(float tu, float tv)
+float MimosaAnalysis::GetTrackDistantToClosestDiode(Limit<float> track_position)
 {
 
   // Gives the distance of the track to the closest diode at the DUT
-  //(tu,tv) are the local coordinates of the track intersect with the DUT
+  //(track_position_sensor.u,tv) are the local coordinates of the track intersect with the DUT
 
   double distance = 1.0e+20;
   int col, lin;
@@ -6301,11 +6292,10 @@ float MimosaAnalysis::GetTrackDistantToClosestDiode(float tu, float tv)
   float u, v;
 
   // Find the pixel which the track intersects
-  ComputePixelPosition_UVToColRow((double)tu, (double)tv, col_p, lin_p);
+  ComputePixelPosition_UVToColRow(static_cast<double>(track_position.u), static_cast<double>(track_position.v), col_p, lin_p);
   col = int(col_p);
   lin = int(lin_p);
 
-  // cout << endl;
   // Now loop over the pixels around the pixel which the track intersects and
   // look for the one with the closest diode's distance to the track
   for (int iii = -1; iii < 2; iii++)
@@ -6328,18 +6318,13 @@ float MimosaAnalysis::GetTrackDistantToClosestDiode(float tu, float tv)
       if (lin_tmp > NofPixelInRaw - 1)
         continue;
 
-      // cout << iii << "  " << jjj << endl;
-
       ComputePixelPosition(col_tmp, lin_tmp, u, v);
-      float distance_tmp = sqrt(pow(tu - u, 2) + pow(tv - v, 2));
+      float distance_tmp = sqrt(pow(track_position.u - u, 2) + pow(track_position.v - v, 2));
 
       if (distance > distance_tmp)
         distance = distance_tmp;
     }
   }
-  // cout << endl;
 
   return distance;
 }
-//__________________________________________________________________________
-//

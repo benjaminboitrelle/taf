@@ -74,6 +74,8 @@
 #include "DSetup.h"
 //---ADC
 
+#include "DCoordinates.h"
+
 #include <string>
 #include <tuple>
 #include <unordered_map>
@@ -83,7 +85,6 @@
 
 class MRaw;
 class MRax;
-
 //---ADC
 class DSetup; // forwards
 //---ADC
@@ -153,7 +154,7 @@ private:
   // ------------------------
   // Files and directories
   // ------------------------
-  TFile *fileInputTree;
+  std::unique_ptr<TFile> fileInputTree;
   ofstream outFileGoodEvt;       //!
   ofstream outFileBadEvt;        //!
   ofstream csvfile;              //!
@@ -178,8 +179,8 @@ private:
   // Parameters for sensor, alignment, geometry, analysis
   // ------------------------
 
-  DSession *fSession;   // JB 2011/07/21 to get rid of global var tSession
-  double trU, trV, trW; // alignment
+  std::shared_ptr<DSession> fSession; // JB 2011/07/21 to get rid of global var tSession
+  double trU, trV, trW;               // alignment
   double theta[3];
   DPrecAlign *alignement;
 
@@ -260,24 +261,18 @@ private:
   int MinHitsPerTrack;      // JB 2013/06/22
   int MaxNbOfTracksInGeom;  // JB 2012/08/30
   int GeoMatrixForTrackCut; // JB 2012/08/30
-  int CUT_MaxNbOfHits;
-  int CUT_MinNbOfHits;
+  Limit<int> CUT_LimitsNbOffHits;
   float TrackToHitDistanceLimit;
   float TrackToHitDistanceLimit2; // JB 2015/12/15
   float CUT_S2N_seed;
   float CUT_S2N_neighbour;
-  float CUT_Q_seed;         // JB 2013/11/08
-  float CUT_Q_cluster;      // JB 2014/01/21
-  float CUT_MinQ_neighbour; // JB 2010/07/27
-  float CUT_MaxQ_neighbour; // JB 2013/11/08
-  double CUT_MaxHitRatePerPixel;
-  double CUT_MinHitRatePerPixel;
-  int CUT_MinSeedIndex; // JB 2013/08/21
-  int CUT_MaxSeedIndex; // JB 2013/08/21
-  int CUT_MinSeedCol;   // JB 2013/08/22
-  int CUT_MaxSeedCol;   // JB 2013/08/22
-  int CUT_MinSeedRow;   // JB 2013/08/22
-  int CUT_MaxSeedRow;   // JB 2013/08/22
+  float CUT_Q_seed;    // JB 2013/11/08
+  float CUT_Q_cluster; // JB 2014/01/21
+  Limit<float> CUT_Q_neighbour;
+  Limit<float> CUT_hitRatePerPixel;
+  Limit<int> CUT_seedIndex;
+  Limit<int> CUT_seedCol;
+  Limit<int> CUT_seedRow;
 
   // ------------------------
   // counters & efficiency
@@ -402,17 +397,11 @@ private:
   float TrackToHitDistance;
   float TrackToHit2ndDistance;
   float chi2;
-  float tu; // track position in plane
-  float tv;
-  float tw;
-  float tdu; // track slope in plane coord.
-  float tdv;
+  SensorCoord3D<float> track_position_sensor;
+  SensorCoord2D<float> track_slope_sensor;
   float tk1; // index of nearest strip to seed
-  float tx;  // track position in telescope
-  float ty;
-  float tz;
-  float tdx; // track slope in tracker coord.
-  float tdy;
+  CartesianCoord3D<float> track_postion_telescope;
+  CartesianCoord2D<float> track_slope_telescope;
 
   // ------------------------
   // MiniVector information, JB 2010/08/30
@@ -655,7 +644,7 @@ public:
   // void       SettHitMapReadOpt(int anOpt)      {Option_read_Pixel_map = anOpt;}
   int GetDebug() { return MimoDebug; }
   int GetRunNumber() { return RunNumber; }
-  DSession *GefSession() { return fSession; }
+  DSession *GefSession() { return fSession.get(); }
   void SetRunNumber(int aRunNumber) { RunNumber = aRunNumber; }
   void InitRunNumber() { RunNumber = fSession->GetRunNumber(); }
   int GetPlaneNumber() { return ThePlaneNumber; }
@@ -668,10 +657,10 @@ public:
   void SetDebug(int aMimoDebug);
   void SetAlignStatus(int aStatus) { fSession->GetTracker()->SetAlignmentStatus(aStatus); } // See DTracker
 
-  double GetCUT_MaxHitRatePerPixel() { return CUT_MaxHitRatePerPixel; }
-  double GetCUT_MinHitRatePerPixel() { return CUT_MinHitRatePerPixel; }
-  void SetCUT_MaxHitRatePerPixel(double aRate) { CUT_MaxHitRatePerPixel = aRate; }
-  void SetCUT_MinHitRatePerPixel(double aRate) { CUT_MinHitRatePerPixel = aRate; }
+  double GetCUT_MaxHitRatePerPixel() const { return CUT_hitRatePerPixel.max; }
+  double GetCUT_MinHitRatePerPixel() const { return CUT_hitRatePerPixel.min; }
+  void SetCUT_MaxHitRatePerPixel(double aRate) { CUT_hitRatePerPixel.max = aRate; }
+  void SetCUT_MinHitRatePerPixel(double aRate) { CUT_hitRatePerPixel.min = aRate; }
 
   void InitMimosaType()
   {
@@ -835,7 +824,7 @@ public:
   // ************************************
   // Analysis commands
 
-  DSession *GetSession() { return fSession; } // JB 2013/06/23
+  DSession *GetSession() { return fSession.get(); } // JB 2013/06/23
   MRaw *GetRaw();
   MRax *GetRax();
   void MimosaPro(int MaxEvt, float TrackHitDist, float S2N_seed, float S2N_neighbour, int submatrix, int GeoMatrix, Option_t *SaveAlign, int UseHitMap = 0, int WriteMissedHits = 0, int WriteGoodHits = 0);
@@ -892,8 +881,7 @@ public:
   DR3 ClosestPointInPlaneToPoint(const int PlaneNumber,
                                  DR3 Point); // AP 2015/08/03
 
-  float GetTrackDistantToClosestDiode(float tu,
-                                      float tv);
+  float GetTrackDistantToClosestDiode(Limit<float> track_position);
 
   // ************************************
   // Plotting functions
