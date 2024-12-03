@@ -19,12 +19,23 @@ set(CMAKE_INSTALL_LIBDIR ${LIB_DIR})
 # C++ standard and compiler flags
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fPIC -O2 -g")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fPIC -O2 -g")
+set(CMAKE_BUILD_TYPE Debug)
 
-# Compiler-specific settings for Clang
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-  set(CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS} -undefined dynamic_lookup")
-endif()
+# Enable all warnings
+if(MSVC)
+    # For MSVC (Visual Studio) compilers
+    add_compile_options(/W4 /WX)  # /W4 for most warnings, /WX treats warnings as errors
+else()
+    # For GCC/Clang compilers
+    add_compile_options(-Wall -Wextra -pedantic)  # -Wall, -Wextra, -pedantic for comprehensive warnings
+    # add_compile_options(-Wall -Wextra -pedantic -Werror)  # -Wall, -Wextra, -pedantic for comprehensive warnings
+    endif()
+
+# # Compiler-specific settings for Clang
+# if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+#   set(CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS} -undefined dynamic_lookup")
+# endif()
 
 # Include and source directories
 set(INCLUDE_DIR ${PROJECT_SOURCE_DIR}/code/include)
@@ -112,6 +123,7 @@ set(DTHDRS
   ${INCLUDE_DIR}/DBeaster.h
   ${INCLUDE_DIR}/MKalmanFilter.h
   ${INCLUDE_DIR}/MLeastChiSquare.h
+  ${INCLUDE_DIR}/DCoordinates.h
 )
 
 set(MSRCS
