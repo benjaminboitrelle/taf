@@ -261,18 +261,18 @@ private:
   int MinHitsPerTrack;      // JB 2013/06/22
   int MaxNbOfTracksInGeom;  // JB 2012/08/30
   int GeoMatrixForTrackCut; // JB 2012/08/30
-  Limit<int> CUT_LimitsNbOffHits;
+  Limit<int> CUT_LimitsNbOffHits = {0, 0};
   float TrackToHitDistanceLimit;
   float TrackToHitDistanceLimit2; // JB 2015/12/15
   float CUT_S2N_seed;
   float CUT_S2N_neighbour;
   float CUT_Q_seed;    // JB 2013/11/08
   float CUT_Q_cluster; // JB 2014/01/21
-  Limit<float> CUT_Q_neighbour;
-  Limit<float> CUT_hitRatePerPixel;
-  Limit<int> CUT_seedIndex;
-  Limit<int> CUT_seedCol;
-  Limit<int> CUT_seedRow;
+  Limit<float> CUT_Q_neighbour = {0.f, 0.f};
+  Limit<float> CUT_hitRatePerPixel = {0.f, 0.f};
+  Limit<int> CUT_seedIndex = {0, 0};
+  Limit<int> CUT_seedCol = {0, 0};
+  Limit<int> CUT_seedRow = {0, 0};
 
   // ------------------------
   // counters & efficiency
@@ -397,11 +397,11 @@ private:
   float TrackToHitDistance;
   float TrackToHit2ndDistance;
   float chi2;
-  SensorCoord3D<float> track_position_sensor;
-  SensorCoord2D<float> track_slope_sensor;
+  SensorCoord3D<float> track_position_sensor{0.f, 0.f, 0.f};
+  SensorCoord2D<float> track_slope_sensor{0.f, 0.f};
   float tk1; // index of nearest strip to seed
-  CartesianCoord3D<float> track_postion_telescope;
-  CartesianCoord2D<float> track_slope_telescope;
+  CartesianCoord3D<float> track_postion_telescope{0.f, 0.f, 0.f};
+  CartesianCoord2D<float> track_slope_telescope{0.f, 0.f};
 
   // ------------------------
   // MiniVector information, JB 2010/08/30
