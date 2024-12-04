@@ -82,6 +82,7 @@
 #include <functional>
 #include <sstream>
 #include <memory>
+#include <array>
 
 class MRaw;
 class MRax;

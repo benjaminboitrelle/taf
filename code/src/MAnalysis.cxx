@@ -6286,44 +6286,37 @@ float MimosaAnalysis::GetTrackDistantToClosestDiode(SensorCoord2D<float> track_p
   // Gives the distance of the track to the closest diode at the DUT
   //(track_position_sensor.u,tv) are the local coordinates of the track intersect with the DUT
 
-  double distance = 1.0e+20;
-  int col, lin;
+  constexpr auto initialDistance{1.0e+20f};
+  auto distance{initialDistance};
   double col_p, lin_p;
-  float u, v;
+  SensorCoord2D<float> hit_position{0.f, 0.f};
 
   // Find the pixel which the track intersects
   ComputePixelPosition_UVToColRow(static_cast<double>(track_position.u), static_cast<double>(track_position.v), col_p, lin_p);
-  col = int(col_p);
-  lin = int(lin_p);
+  auto col{static_cast<int>(col_p)};
+  auto lin{static_cast<int>(lin_p)};
+
+  constexpr std::array<int, 3> offsets{-1, 0, 1};
 
   // Now loop over the pixels around the pixel which the track intersects and
   // look for the one with the closest diode's distance to the track
-  for (int iii = -1; iii < 2; iii++)
+  for (auto i{0}; i < 9; ++i)
   {
-    // Looping on the colums to the left and to the right of the main pixel
-    int col_tmp = col + iii;
+    const auto col_tmp = col + offsets.at(i / 3); // Determine column offset from row index
+    const auto lin_tmp = lin + offsets.at(i % 3); // Determine row offset from column index
 
-    // Cut to ensure that the columns tested are inbetween 0 - Ncolumns-1
-    if (col_tmp < 0)
+    // Ensure the row and column are within bounds
+    if (col_tmp < 0 || col_tmp >= NofPixelInColumn || lin_tmp < 0 || lin_tmp >= NofPixelInRaw)
       continue;
-    if (col_tmp > NofPixelInColumn - 1)
-      continue;
-    for (int jjj = -1; jjj < 2; jjj++)
-    {
-      int lin_tmp = lin + jjj;
 
-      // Cut to ensure that the lines tested are inbetween 0 - Nlines-1
-      if (lin_tmp < 0)
-        continue;
-      if (lin_tmp > NofPixelInRaw - 1)
-        continue;
+    // Compute the pixel position for the valid neighbor
+    ComputePixelPosition(col_tmp, lin_tmp, hit_position.u, hit_position.v);
 
-      ComputePixelPosition(col_tmp, lin_tmp, u, v);
-      float distance_tmp = sqrt(pow(track_position.u - u, 2) + pow(track_position.v - v, 2));
+    // Calculate the distance from the track to this pixel
+    auto distance_tmp{std::sqrtf(std::powf(track_position.u - hit_position.u, 2) + std::powf(track_position.v - hit_position.v, 2))};
 
-      if (distance > distance_tmp)
-        distance = distance_tmp;
-    }
+    // Update the minimum distance
+    distance = std::min(distance, distance_tmp);
   }
 
   return distance;
