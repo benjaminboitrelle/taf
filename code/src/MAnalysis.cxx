@@ -4437,7 +4437,7 @@ void MimosaAnalysis::ClusterPosition_aht(DAuthenticHit *thehit)
   if (MimoDebug > 2)
     printf(" pixLR %2d-%2d, pixBT  %2d-%2d, (u,v) = (%.1f, %.1f), du=%.1f, "
            "dv=%.1f\n",
-           iLeft, iRight, iBottom, iTop, Uaht, Vaht, Uaht - track_position_sensor.u, Vaht - tv);
+           iLeft, iRight, iBottom, iTop, Uaht, Vaht, Uaht - track_position_sensor.u, Vaht - track_position_sensor.v);
 }
 
 //_____________________________________________________________________________
@@ -4807,13 +4807,13 @@ void MimosaAnalysis::TrackHitPosition_fill(DAuthenticHit *thehit,
         if (TotalCharge > 0.)
         {
           hChargeIntegral1->Fill(uuu - track_position_sensor.u, vvv - track_position_sensor.v, Charge1 / TotalCharge);
-          hChargeNorm1->Fill(uuu - track_position_sensor.u, vvv - tv);
+          hChargeNorm1->Fill(uuu - track_position_sensor.u, vvv - track_position_sensor.v);
           hChargeIntegral2->Fill(-uuu + track_position_sensor.u, vvv - track_position_sensor.v, Charge2 / TotalCharge);
-          hChargeNorm2->Fill(-uuu + track_position_sensor.u, vvv - tv);
+          hChargeNorm2->Fill(-uuu + track_position_sensor.u, vvv - track_position_sensor.v);
           hChargeIntegral3->Fill(uuu - track_position_sensor.u, -vvv + track_position_sensor.v, Charge3 / TotalCharge);
-          hChargeNorm3->Fill(uuu - track_position_sensor.u, -vvv + tv);
+          hChargeNorm3->Fill(uuu - track_position_sensor.u, -vvv + track_position_sensor.v);
           hChargeIntegral4->Fill(-uuu + track_position_sensor.u, -vvv + track_position_sensor.v, Charge4 / TotalCharge);
-          hChargeNorm4->Fill(-uuu + track_position_sensor.u, -vvv + tv);
+          hChargeNorm4->Fill(-uuu + track_position_sensor.u, -vvv + track_position_sensor.v);
         }
       }
     }
@@ -6280,7 +6280,7 @@ void MimosaAnalysis::ProjectionImaging_end(int numberOfHits)
 }
 //__________________________________________________________________________
 //
-float MimosaAnalysis::GetTrackDistantToClosestDiode(Limit<float> track_position)
+float MimosaAnalysis::GetTrackDistantToClosestDiode(SensorCoord2D<float> track_position)
 {
 
   // Gives the distance of the track to the closest diode at the DUT

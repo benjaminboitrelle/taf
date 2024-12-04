@@ -881,7 +881,7 @@ public:
   DR3 ClosestPointInPlaneToPoint(const int PlaneNumber,
                                  DR3 Point); // AP 2015/08/03
 
-  float GetTrackDistantToClosestDiode(Limit<float> track_position);
+  float GetTrackDistantToClosestDiode(SensorCoord2D<float> track_position);
 
   // ************************************
   // Plotting functions
