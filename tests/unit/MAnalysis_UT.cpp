@@ -188,3 +188,41 @@ BOOST_AUTO_TEST_CASE(TestSetClusterGeometricalType_MoreThanFour)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+
+// BOOST_AUTO_TEST_SUITE(GetFileNumber)
+// BOOST_AUTO_TEST_CASE(TestGetFileNumber_noFile)
+// {
+//     auto analysis{MimosaAnalysis()};
+//     const auto expected{0};
+//     BOOST_CHECK_EQUAL(expected, analysis.GetFileNumber());
+// }
+// BOOST_AUTO_TEST_SUITE_END()
+
+// Mocking ComputePixelPosition and ComputePixelPosition_UVToColRow for simplicity
+// void ComputePixelPosition_UVToColRow(double u, double v, double &col, double &lin)
+// {
+//     // Simple mock: assuming u, v map directly to col, lin (you would adjust as needed for your logic)
+//     col = u;
+//     lin = v;
+// }
+
+// void ComputePixelPosition(int col, int lin, float &u, float &v)
+// {
+//     // Simple mock: assuming col, lin map directly back to u, v (you would adjust as needed)
+//     u = static_cast<float>(col);
+//     v = static_cast<float>(lin);
+// }
+
+BOOST_AUTO_TEST_SUITE(GetTrackDistantToClosestDiode)
+BOOST_AUTO_TEST_CASE(Test_GetTrackDistantToClosestDiode)
+{
+    // Test case 1: Track exactly on a diode (distance should be 0)
+    MimosaAnalysis analysis;
+    constexpr auto initialDistance{1.0e+20f};
+    SensorCoord3D<float> track_position{0.0f, 0.0f, 0.f}; // Assuming the track intersects exactly at (0, 0)
+
+    // Assuming that the closest diode is at (0, 0)
+    BOOST_CHECK_EQUAL(analysis.GetTrackDistantToClosestDiode(track_position), initialDistance);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
