@@ -2203,9 +2203,8 @@ DPrecAlign *MimosaAnalysis::AlignMimosa(int aDistance)
   }
   else
   {
-    return MimosaAlignAnalysis::Instance(fSession)->AlignMimosa(
-        alignement, GetCorParFile(), CreateGlobalResultDir(),
-        aDistance); // arguments for alignment changed, JB 2011/06/18
+    return MimosaAlignAnalysis::Instance(fSession.get())->AlignMimosa(alignement, GetCorParFile(), CreateGlobalResultDir(),
+                                                                      aDistance); // arguments for alignment changed, JB 2011/06/18
   }
 }
 
@@ -6280,7 +6279,7 @@ void MimosaAnalysis::ProjectionImaging_end(int numberOfHits)
 }
 //__________________________________________________________________________
 //
-float MimosaAnalysis::GetTrackDistantToClosestDiode(SensorCoord2D<float> track_position)
+float MimosaAnalysis::GetTrackDistantToClosestDiode(SensorCoord3D<float> track_position)
 {
 
   // Gives the distance of the track to the closest diode at the DUT
