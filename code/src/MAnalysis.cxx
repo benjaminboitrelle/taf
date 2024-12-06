@@ -2214,60 +2214,44 @@ int MimosaAnalysis::GetFileNumber()
 {
   // Returns the last DSF file number created or 0 if no file.
   // Try 100 file numbers before stopping.
-  // Modified: JB 2011/07/07 to localize path names
-  // Modified: JB 2012/11/21 to find files event if low numbers do no exist
 
-  Char_t New_File_Name[1000];
-  int FileNumber = 1;
-  int missedFiles = 0;
-  int Returned_FileNumber = 0;
-  int exist = 1;
-  while (exist)
+  constexpr auto MaxMissedFiles{100};
+  constexpr auto InitialFileNumber{1};
+
+  std::stringstream fname_ss;
+  std::string new_file_name;
+  auto file_number{InitialFileNumber};
+  auto missed_files{0};
+  auto returned_file_number{0};
+  for (; missed_files < MaxMissedFiles; ++file_number)
   {
-    sprintf(New_File_Name, "%srun%d_0%d.root",
-            (const char *)fSession->GetSummaryFilePath(),
-            fSession->GetRunNumber(), FileNumber);
-    sprintf(New_File_Name, "%s",
-            fTool.LocalizeDirName(New_File_Name)); // JB 2011/07/07
-    if (!gSystem->AccessPathName(New_File_Name))
+    fname_ss.str("");
+    fname_ss << fSession->GetSummaryFilePath() << "run" << fSession->GetRunNumber() << "_0" << file_number << ".root";
+    new_file_name = fTool.LocalizeDirName(fname_ss.str().c_str());
+    if (!gSystem->AccessPathName(new_file_name.c_str()))
     {
-      missedFiles = -1;
-      FileNumber++;
-    }
-    else if (0 <= missedFiles && missedFiles < 100)
-    {
-      missedFiles++;
-      FileNumber++;
+      missed_files = -1;
     }
     else
     {
-      exist = 0;
+      ++missed_files;
     }
   };
 
   // Check if the user asked for a specific number
-  if (!fUserFileNumber)
-  {
-    Returned_FileNumber = FileNumber - 1;
-  }
-  else
-  {
-    Returned_FileNumber = TMath::Min(FileNumber - 1, fUserFileNumber);
-  }
+  returned_file_number = fUserFileNumber == 0 ? file_number - 1 : std::min(file_number - 1, fUserFileNumber);
 
   // Check the file exists
-  sprintf(New_File_Name, "%srun%d_0%d.root",
-          (const char *)fSession->GetSummaryFilePath(),
-          fSession->GetRunNumber(), Returned_FileNumber);
-  sprintf(New_File_Name, "%s", fTool.LocalizeDirName(New_File_Name));
-  if (gSystem->AccessPathName(New_File_Name))
+  fname_ss.str("");
+  fname_ss << fSession->GetSummaryFilePath() << "run" << fSession->GetRunNumber() << "_0" << returned_file_number << ".root";
+  new_file_name = fTool.LocalizeDirName(fname_ss.str().c_str());
+
+  if (gSystem->AccessPathName(new_file_name.c_str()))
   {
-    // Info( "GetFileNumber", "WARNING: file %s does not exist!",
-    // New_File_Name);
-    Returned_FileNumber = 0;
+    returned_file_number = 0;
   }
 
-  return Returned_FileNumber;
+  return returned_file_number;
 }
 
 //_____________________________________________________________________________
