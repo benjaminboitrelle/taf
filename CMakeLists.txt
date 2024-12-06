@@ -182,4 +182,5 @@ install(TARGETS ${libname} LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 # Boost unit test setup
 find_package(Boost CONFIG COMPONENTS unit_test_framework REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
-add_subdirectory(${PROJECT_SOURCE_DIR}/tests/unit)
+include(CTest)
+add_subdirectory(${PROJECT_SOURCE_DIR}/tests)
