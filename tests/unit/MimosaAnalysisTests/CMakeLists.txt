@@ -2,6 +2,7 @@
 set(TEST_SOURCES
     test_CheckIfDone.cpp
     test_SetClusterGeometricalType.cpp
+    test_CreateGlobalResultDir.cpp
 )
 
 add_executable(MimosaAnalysisTests)
