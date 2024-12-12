@@ -1,0 +1,31 @@
+Checks: >
+  -*,
+  bugprone-*,
+  cert-*,
+  clang-analyzer-*,
+  cppcoreguidelines-*,
+  modernize-*,
+  performance-*,
+  readability-*,
+  portability-*,
+  misc-*,
+  google-readability-*,
+  google-runtime-int,
+  google-runtime-references
+  '-*,readability-identifier-naming'
+   - "-llvm-include-order"
+
+CheckOptions:
+  - { key: readability-identifier-naming.NamespaceCase, value: lower_case }
+  - { key: readability-identifier-naming.ClassCase, value: CamelCase }
+  - { key: readability-identifier-naming.PrivateMemberPrefix, value: m_ }
+  - { key: readability-identifier-naming.StructCase, value: CamelCase }
+  - { key: readability-identifier-naming.FunctionCase, value: lower_case }
+  - { key: readability-identifier-naming.VariableCase, value: lower_case }
+  - { key: readability-identifier-naming.GlobalConstantCase, value: UPPER_CASE }
+
+WarningsAsErrors: "*"
+
+HeaderFilterRegex: ".*"
+
+FormatStyle: file
